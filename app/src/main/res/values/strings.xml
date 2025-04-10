@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">Food Ordering System</string>
+    
+    <!-- Navigation -->
+    <string name="home">首頁</string>
+    <string name="shop_info">商家資訊</string>
+    <string name="back">返回</string>
+    <string name="cart">購物車</string>
+    
+    <!-- Menu Categories -->
+    <string name="main_dishes">主食</string>
+    <string name="side_dishes">副餐</string>
+    <string name="drinks">飲料</string>
+    <string name="others">其他</string>
+    
+    <!-- Sizes -->
+    <string name="size_large">大</string>
+    <string name="size_medium">中</string>
+    <string name="size_small">小</string>
+    
+    <!-- Product Details -->
+    <string name="quantity">數量：</string>
+    <string name="price">價格：NT$</string>
+    <string name="add_to_cart">新增至購物車</string>
+    <string name="expand">展開</string>
+    <string name="rating">食物評分:</string>
+    
+    <!-- Cart -->
+    <string name="my_order">我的訂單</string>
+    <string name="item_name">餐點名稱</string>
+    <string name="quantity_header">數量</string>
+    <string name="price_header">價格</string>
+    <string name="total_amount">總金額：NT$</string>
+    <string name="checkout">結帳</string>
+    
+    <!-- Shop Info -->
+    <string name="contact_info">聯絡資訊</string>
+    <string name="phone">電話：</string>
+    <string name="address">地址：</string>
+    <string name="business_hours">營業時間：</string>
+    <string name="call">點擊撥打</string>
+    
+    <!-- Add Shop Info -->
+    <string name="add_shop_info">新增商家資訊</string>
+    <string name="enter_phone">請輸入電話</string>
+    <string name="enter_address">請輸入地址</string>
+    <string name="enter_business_hours">請輸入營業時間</string>
+    <string name="submit">提交</string>
+</resources>

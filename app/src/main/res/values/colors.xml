@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 高端精致配色方案 -->
+    <color name="primary">#2C3E50</color>         <!-- 深蓝灰色作为主色调 -->
+    <color name="primary_dark">#1A2530</color>    <!-- 更深的蓝灰色 -->
+    <color name="primary_light">#B3C6D1</color>   <!-- 浅蓝灰色 -->
+    <color name="accent">#D4AF37</color>          <!-- 金色作为强调色 -->
+    <color name="primary_text">#212121</color>    <!-- 主要文本色 -->
+    <color name="secondary_text">#757575</color>  <!-- 次要文本色 -->
+    <color name="icons">#FFFFFF</color>           <!-- 图标颜色 -->
+    <color name="divider">#ECEFF1</color>         <!-- 分隔线颜色 - 更加柔和 -->
+    <color name="background">#F8F9FA</color>      <!-- 背景色 - 更加清爽 -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="rating_star">#D4AF37</color>     <!-- 金色评分星星 -->
+    <color name="card_background">#FFFFFF</color> <!-- 卡片背景色 -->
+    <color name="price_color">#2C3E50</color>     <!-- 价格颜色 -->
+    <color name="button_background">#2C3E50</color> <!-- 按钮背景色 -->
+    <color name="button_text">#FFFFFF</color>     <!-- 按钮文字颜色 -->
+    <color name="shadow">#20000000</color>        <!-- 阴影颜色 - 20%透明度黑色 -->
+</resources>
