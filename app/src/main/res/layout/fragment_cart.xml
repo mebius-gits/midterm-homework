@@ -11,9 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:text="@string/my_order"
-        android:textSize="24sp"
+        android:textSize="@dimen/title_text_size"
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/primary_text"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,11 +23,11 @@
         android:id="@+id/cartHeaderCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="20dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cartTitleText">
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:background="@color/primary"
             android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
+            android:paddingHorizontal="14dp"
             android:paddingVertical="12dp">
 
             <TextView
@@ -46,7 +46,7 @@
                 android:layout_weight="2"
                 android:text="@string/item_name"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_small"
                 android:fontFamily="sans-serif-medium" />
 
             <TextView
@@ -56,7 +56,7 @@
                 android:gravity="center"
                 android:text="@string/quantity_header"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_small"
                 android:fontFamily="sans-serif-medium" />
 
             <TextView
@@ -66,7 +66,7 @@
                 android:gravity="end"
                 android:text="@string/price_header"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_small"
                 android:fontFamily="sans-serif-medium" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -75,41 +75,67 @@
         android:id="@+id/cartRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
         android:clipToPadding="false"
-        android:paddingVertical="8dp"
+        android:paddingVertical="6dp"
         app:layout_constraintBottom_toTopOf="@+id/totalCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cartHeaderCard"
         tools:listitem="@layout/item_cart" />
 
-    <TextView
-        android:id="@+id/emptyCartText"
+    <LinearLayout
+        android:id="@+id/emptyCartContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your cart is empty"
-        android:textSize="18sp"
-        android:textColor="@color/secondary_text"
-        android:fontFamily="sans-serif"
+        android:orientation="vertical"
+        android:gravity="center"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_empty_cart"
+            android:contentDescription="Empty cart"
+            android:alpha="0.5" />
+
+        <TextView
+            android:id="@+id/emptyCartText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_cart"
+            android:textSize="@dimen/text_size_medium"
+            android:textColor="@color/secondary_text"
+            android:fontFamily="sans-serif"
+            android:layout_marginTop="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/browseMenuButton"
+            style="@style/Widget.App.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/browse_menu"
+            android:textSize="@dimen/text_size_small"
+            android:textColor="@color/primary_text" />
+    </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/totalCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
         app:layout_constraintBottom_toTopOf="@+id/checkoutButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -117,14 +143,14 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/totalLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/total_amount"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_medium"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/primary_text"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -136,7 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_large"
                 android:fontFamily="sans-serif-medium"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -148,17 +174,18 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/checkoutButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="24dp"
-        android:paddingVertical="14dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/checkout"
-        android:textSize="16sp"
-        android:textColor="@color/button_text"
+        android:textSize="@dimen/button_text_size"
         app:cornerRadius="12dp"
+        app:icon="@drawable/ic_checkout"
+        app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

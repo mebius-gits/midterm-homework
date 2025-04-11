@@ -40,13 +40,30 @@
     <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/button_background</item>
         <item name="android:textColor">@color/button_text</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:letterSpacing">0.01</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="elevation">4dp</item>
+        <item name="rippleColor">@color/accent</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+    
+    <!-- 新增小型按钮样式 -->
+    <style name="Widget.App.Button.Small" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">14sp</item>
         <item name="cornerRadius">8dp</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="elevation">2dp</item>
+        <item name="rippleColor">@color/primary_light</item>
     </style>
     
     <!-- 文本输入样式 -->
@@ -65,6 +82,21 @@
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <!-- 图标按钮样式 -->
+    <style name="Widget.App.Button.IconOnly" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="iconTint">@color/primary</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="cornerRadius">24dp</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">@color/shadow</item>
     </style>
     
     <style name="TextAppearance.App.Subtitle" parent="TextAppearance.MaterialComponents.Subtitle1">

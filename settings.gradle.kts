@@ -11,14 +11,8 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
+
+// 移除dependencyResolutionManagement块，因为我们使用传统方式在根build.gradle.kts中定义repositories
 
 rootProject.name = "My Application"
 include(":app")
- 

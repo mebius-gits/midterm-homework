@@ -21,10 +21,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
+        // Set up toolbar
+        setSupportActionBar(binding.toolbar)
+        
         // Set up navigation with bottom nav bar
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         binding.bottomNavigation.setupWithNavController(navController)
+        
+        // Change title based on destination
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.menuFragment -> binding.toolbar.title = getString(R.string.app_title)
+                R.id.shopInfoFragment -> binding.toolbar.title = getString(R.string.shop_info)
+                R.id.cartFragment -> binding.toolbar.title = getString(R.string.cart)
+            }
+        }
         
         // Apply window insets
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->

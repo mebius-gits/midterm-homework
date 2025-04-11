@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Food Ordering System</string>
+    <string name="app_title">美食訂餐系統</string>
     
     <!-- Navigation -->
     <string name="home">首頁</string>
@@ -24,6 +25,7 @@
     <string name="add_to_cart">新增至購物車</string>
     <string name="expand">展開</string>
     <string name="rating">食物評分:</string>
+    <string name="description">描述</string>
     
     <!-- Cart -->
     <string name="my_order">我的訂單</string>
@@ -32,6 +34,8 @@
     <string name="price_header">價格</string>
     <string name="total_amount">總金額：NT$</string>
     <string name="checkout">結帳</string>
+    <string name="empty_cart">購物車是空的</string>
+    <string name="browse_menu">瀏覽菜單</string>
     
     <!-- Shop Info -->
     <string name="contact_info">聯絡資訊</string>

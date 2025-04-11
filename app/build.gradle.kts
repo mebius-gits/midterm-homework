@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin") // Added Safe Args plugin
 }
 
@@ -40,29 +40,45 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
+    // 正确引用rootProject的扩展属性
+    val coreKtxVersion = rootProject.extra["coreKtxVersion"] as String
+    val appcompatVersion = rootProject.extra["appcompatVersion"] as String
+    val materialVersion = rootProject.extra["materialVersion"] as String
+    val activityVersion = rootProject.extra["activityVersion"] as String
+    val constraintlayoutVersion = rootProject.extra["constraintlayoutVersion"] as String
+    val navigationVersion = rootProject.extra["navigationVersion"] as String
+    val lifecycleVersion = rootProject.extra["lifecycleVersion"] as String
+    val recyclerviewVersion = rootProject.extra["recyclerviewVersion"] as String
+    val cardviewVersion = rootProject.extra["cardviewVersion"] as String
+    val viewpager2Version = rootProject.extra["viewpager2Version"] as String
+    val glideVersion = rootProject.extra["glideVersion"] as String
+    val junitVersion = rootProject.extra["junitVersion"] as String
+    val junitExtVersion = rootProject.extra["junitExtVersion"] as String
+    val espressoCoreVersion = rootProject.extra["espressoCoreVersion"] as String
+
+    implementation("androidx.core:core-ktx:$coreKtxVersion")
+    implementation("androidx.appcompat:appcompat:$appcompatVersion")
+    implementation("com.google.android.material:material:$materialVersion")
+    implementation("androidx.activity:activity:$activityVersion")
+    implementation("androidx.constraintlayout:constraintlayout:$constraintlayoutVersion")
     
     // Navigation Components
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
+    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
     
     // Lifecycle components
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
     
     // UI Components
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.cardview)
-    implementation(libs.androidx.viewpager2)
+    implementation("androidx.recyclerview:recyclerview:$recyclerviewVersion")
+    implementation("androidx.cardview:cardview:$cardviewVersion")
+    implementation("androidx.viewpager2:viewpager2:$viewpager2Version")
     
     // Image loading
-    implementation(libs.glide)
+    implementation("com.github.bumptech.glide:glide:$glideVersion")
     
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation("junit:junit:$junitVersion")
+    androidTestImplementation("androidx.test.ext:junit:$junitExtVersion")
+    androidTestImplementation("androidx.test.espresso:espresso-core:$espressoCoreVersion")
 }
