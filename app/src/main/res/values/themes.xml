@@ -52,18 +52,23 @@
         <item name="android:stateListAnimator">@null</item>
     </style>
     
-    <!-- 新增小型按钮样式 -->
+    <!-- 小型按钮样式 - 更新 -->
     <style name="Widget.App.Button.Small" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/accent</item>
-        <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textSize">14sp</item>
-        <item name="cornerRadius">8dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="cornerRadius">18dp</item>
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingEnd">12dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
         <item name="elevation">2dp</item>
-        <item name="rippleColor">@color/primary_light</item>
+        <item name="rippleColor">@color/shadow</item>
+        <item name="iconSize">16dp</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconGravity">end</item>
     </style>
     
     <!-- 文本输入样式 -->
@@ -116,5 +121,14 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/secondary_text</item>
         <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <!-- Style for card with only top corners rounded -->
+    <style name="ShapeAppearanceOverlay.TopRounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
     </style>
 </resources>

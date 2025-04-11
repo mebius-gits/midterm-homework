@@ -4,74 +4,132 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="6dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="1dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeColor="#EEEEEE"
+    app:strokeWidth="1dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/cartItemImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/rounded_image_background"
+            android:contentDescription="Product image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/cartItemName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_marginStart="12dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/primary_text"
+            app:layout_constraintStart_toEndOf="@id/cartItemImage"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cartItemPrice"
             tools:text="Food Item Name (Medium)" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/cartItemVariant"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:textColor="#757575"
+            app:layout_constraintStart_toEndOf="@id/cartItemImage"
+            app:layout_constraintTop_toBottomOf="@id/cartItemName"
+            app:layout_constraintEnd_toStartOf="@id/cartItemPrice"
+            tools:text="Size: Medium, Extra cheese" />
 
-            <ImageButton
-                android:id="@+id/decreaseButton"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Decrease quantity"
-                android:src="@android:drawable/ic_menu_delete"
-                android:tint="@color/primary" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/quantityControlContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#DDDDDD"
+            app:strokeWidth="0dp"
+            app:layout_constraintStart_toStartOf="@id/cartItemVariant"
+            app:layout_constraintTop_toBottomOf="@id/cartItemVariant">
 
-            <TextView
-                android:id="@+id/cartItemQuantity"
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
-                android:textSize="15sp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/primary_text"
-                tools:text="2" />
+                android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/increaseButton"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Increase quantity"
-                android:src="@android:drawable/ic_menu_add"
-                android:tint="@color/primary" />
-        </LinearLayout>
+                <ImageButton
+                    android:id="@+id/decreaseButton"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Decrease quantity"
+                    android:padding="8dp"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:tint="@color/primary" />
+
+                <TextView
+                    android:id="@+id/cartItemQuantity"
+                    android:layout_width="36dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:textColor="@color/primary_text"
+                    android:textSize="16sp"
+                    tools:text="2" />
+
+                <ImageButton
+                    android:id="@+id/increaseButton"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Increase quantity"
+                    android:padding="8dp"
+                    android:src="@android:drawable/ic_menu_add"
+                    android:tint="@color/primary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/cartItemPrice"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
             android:textColor="@color/price_color"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:fontFamily="sans-serif-medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="NT$400" />
-    </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/removeItemButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Remove item"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:padding="8dp"
+            android:tint="#D32F2F"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

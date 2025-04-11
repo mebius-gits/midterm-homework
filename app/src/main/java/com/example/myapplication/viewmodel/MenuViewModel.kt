@@ -46,16 +46,22 @@ class MenuViewModel : ViewModel() {
     private val _selectedSize = MutableStateFlow(CartItem.Size.MEDIUM)
     val selectedSize: StateFlow<CartItem.Size> = _selectedSize
 
+    // Adjusted price based on size
+    private val _adjustedPrice = MutableStateFlow(0.0)
+    val adjustedPrice: StateFlow<Double> = _adjustedPrice
+
     // Select a food item for viewing details
     fun selectFoodItem(foodItem: FoodItem) {
         _selectedFoodItem.value = foodItem
         _quantity.value = 1
         _selectedSize.value = CartItem.Size.MEDIUM
+        calculateAdjustedPrice()
     }
 
     // Clear selected food item
     fun clearSelectedFoodItem() {
         _selectedFoodItem.value = null
+        _adjustedPrice.value = 0.0
     }
 
     // Update quantity
@@ -66,9 +72,20 @@ class MenuViewModel : ViewModel() {
         }
     }
 
-    // Update size
+    // Update size and recalculate price
     fun updateSize(size: CartItem.Size) {
         _selectedSize.value = size
+        calculateAdjustedPrice()
+    }
+
+    // Calculate the adjusted price based on the selected size
+    private fun calculateAdjustedPrice() {
+        val basePrice = _selectedFoodItem.value?.price ?: 0.0
+        _adjustedPrice.value = when (_selectedSize.value) {
+            CartItem.Size.SMALL -> basePrice * 0.8  // 80% of base price
+            CartItem.Size.MEDIUM -> basePrice       // Base price
+            CartItem.Size.LARGE -> basePrice * 1.2  // 120% of base price
+        }
     }
 
     // Add current selected item to cart

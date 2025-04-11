@@ -106,6 +106,13 @@ class ItemDetailFragment : Fragment() {
                         binding.sizeGroup.check(buttonId)
                     }
                 }
+                
+                // Observe adjusted price based on size
+                launch {
+                    viewModel.adjustedPrice.collect { price ->
+                        binding.foodPrice.text = "NT$${price.toInt()}"
+                    }
+                }
             }
         }
     }
@@ -113,7 +120,7 @@ class ItemDetailFragment : Fragment() {
     private fun updateFoodItemDetails(foodItem: FoodItem) {
         binding.apply {
             foodName.text = foodItem.name
-            foodPrice.text = "NT$${foodItem.price.toInt()}"
+            // Price will be updated through the adjustedPrice StateFlow
             foodDescription.text = foodItem.description
             ratingBar.rating = foodItem.rating
             

@@ -44,7 +44,8 @@ class CartFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = CartItemAdapter(
             onIncreaseClick = { cartItem -> viewModel.increaseQuantity(cartItem) },
-            onDecreaseClick = { cartItem -> viewModel.decreaseQuantity(cartItem) }
+            onDecreaseClick = { cartItem -> viewModel.decreaseQuantity(cartItem) },
+            onRemoveClick = { cartItem -> viewModel.removeItem(cartItem) }
         )
         
         binding.cartRecyclerView.apply {

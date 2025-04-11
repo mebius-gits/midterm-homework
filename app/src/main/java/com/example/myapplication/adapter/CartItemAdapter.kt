@@ -13,7 +13,8 @@ import com.example.myapplication.model.CartItem
  */
 class CartItemAdapter(
     private val onIncreaseClick: (CartItem) -> Unit,
-    private val onDecreaseClick: (CartItem) -> Unit
+    private val onDecreaseClick: (CartItem) -> Unit,
+    private val onRemoveClick: (CartItem) -> Unit = { onDecreaseClick(it) } // Default to decrease if not provided
 ) : ListAdapter<CartItem, CartItemAdapter.CartItemViewHolder>(CartItemDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartItemViewHolder {
@@ -47,6 +48,13 @@ class CartItemAdapter(
                     onDecreaseClick(getItem(position))
                 }
             }
+            
+            binding.removeItemButton.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onRemoveClick(getItem(position))
+                }
+            }
         }
 
         fun bind(cartItem: CartItem) {
@@ -57,9 +65,30 @@ class CartItemAdapter(
                     CartItem.Size.LARGE -> "(大)"
                 }
                 
-                cartItemName.text = "${cartItem.foodItem.name} $sizeText"
+                // Set main item details
+                cartItemName.text = cartItem.foodItem.name
+                
+                // Set variant info (size and any other details)
+                cartItemVariant.text = "Size: $sizeText"
+                
+                // Set price details
+                val unitPrice = cartItem.foodItem.price * when(cartItem.selectedSize) {
+                    CartItem.Size.SMALL -> 0.8
+                    CartItem.Size.MEDIUM -> 1.0
+                    CartItem.Size.LARGE -> 1.3
+                }
+                
+                cartItemPrice.text = "NT$${unitPrice.toInt()}"
+                
+                // Set quantity
                 cartItemQuantity.text = cartItem.quantity.toString()
-                cartItemPrice.text = "NT$${cartItem.getTotalPrice().toInt()}"
+                
+                // If we had images, we would load them here
+                // For example with Glide or Picasso
+                // Glide.with(cartItemImage.context)
+                //     .load(cartItem.foodItem.imageUrl)
+                //     .placeholder(R.drawable.placeholder_food)
+                //     .into(cartItemImage)
             }
         }
     }

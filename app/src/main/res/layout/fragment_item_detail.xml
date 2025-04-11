@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <!-- Hero image with improved scrim gradient for better text visibility -->
+    <!-- Hero image with parallax effect -->
     <ImageView
         android:id="@+id/foodImage"
         android:layout_width="0dp"
-        android:layout_height="280dp"
+        android:layout_height="220dp"
         android:contentDescription="Food image"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,23 +18,26 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@android:drawable/ic_menu_gallery" />
         
-    <!-- Enhanced gradient scrim overlay for better visibility of elements on top of image -->
+    <!-- Gradient scrim overlay -->
     <View
         android:id="@+id/imageScrim"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="238dp"
         android:background="@drawable/gradient_scrim"
         app:layout_constraintBottom_toBottomOf="@id/foodImage"
         app:layout_constraintEnd_toEndOf="@id/foodImage"
         app:layout_constraintStart_toStartOf="@id/foodImage"
         app:layout_constraintTop_toTopOf="@id/foodImage" />
 
+    <!-- Main Content Card -->
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/contentCard"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="-32dp"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="10dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="0dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.TopRounded"
+        app:cardElevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,65 +46,72 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            android:overScrollMode="never">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="28dp"
-                android:paddingTop="28dp"
-                android:paddingEnd="28dp"
-                android:paddingBottom="36dp">
+                android:paddingHorizontal="24dp"
+                android:paddingTop="44dp"
+                android:paddingBottom="32dp">
 
+                <!-- Food name and price in the same row -->
                 <TextView
                     android:id="@+id/foodName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="2"
                     android:textColor="@color/primary"
-                    android:textSize="26sp"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textSize="24sp"
+                    app:layout_constraintEnd_toStartOf="@+id/foodPrice"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Food Name" />
+                    tools:text="Premium Food Name" />
 
                 <TextView
                     android:id="@+id/foodPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:textColor="@color/black"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/primary"
                     android:textSize="22sp"
-                    android:fontFamily="sans-serif"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/foodName"
-                    tools:text="@string/price" />
+                    app:layout_constraintBottom_toBottomOf="@+id/foodName"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/foodName"
+                    tools:text="$12.99" />
 
+                <!-- Rating positioned directly under the food name -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/ratingCardView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/foodName">
 
                     <LinearLayout
                         android:id="@+id/ratingLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:background="@color/primary_light"
                         android:gravity="center_vertical"
-                        android:padding="8dp"
-                        android:background="@color/primary_light">
+                        android:orientation="horizontal"
+                        android:padding="6dp">
 
                         <TextView
                             android:id="@+id/ratingText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="6dp"
-                            android:textSize="16sp"
+                            android:layout_marginEnd="4dp"
+                            android:fontFamily="sans-serif-medium"
                             android:textColor="@color/primary"
+                            android:textSize="14sp"
                             tools:text="4.5" />
 
                         <RatingBar
@@ -116,63 +126,70 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <View
-                    android:id="@+id/divider"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="28dp"
-                    android:background="@color/divider"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/foodPrice" />
-
+                <!-- Description section - showing directly instead of in tabs -->
                 <TextView
                     android:id="@+id/descriptionLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="sans-serif-medium"
                     android:text="@string/description"
-                    android:textSize="20sp"
                     android:textColor="@color/primary"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+                    app:layout_constraintTop_toBottomOf="@+id/ratingCardView" />
 
                 <TextView
                     android:id="@+id/foodDescription"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="16sp"
+                    android:layout_marginTop="12dp"
                     android:lineSpacingExtra="6dp"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/descriptionLabel"
                     tools:text="@tools:sample/lorem/random" />
 
+                <!-- Customization Section -->
+                <TextView
+                    android:id="@+id/customizationLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Customization"
+                    android:textColor="@color/primary"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/foodDescription" />
+
+                <!-- Size selection in horizontal layout -->
                 <TextView
                     android:id="@+id/sizeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="36dp"
+                    android:layout_marginTop="16dp"
                     android:text="Size:"
-                    android:textSize="20sp"
                     android:textColor="@color/primary"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/foodDescription" />
+                    app:layout_constraintTop_toBottomOf="@+id/customizationLabel" />
 
-                <!-- Size selection with enhanced chip design -->
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/sizeGroup"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    app:singleSelection="true"
-                    app:selectionRequired="true"
-                    app:chipSpacingHorizontal="16dp"
+                    android:layout_marginStart="12dp"
+                    android:paddingStart="10dp"
+                    app:chipSpacingHorizontal="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/sizeLabel"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sizeLabel">
+                    app:layout_constraintStart_toEndOf="@+id/sizeLabel"
+                    app:layout_constraintTop_toTopOf="@+id/sizeLabel"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/sizeSmall"
@@ -181,6 +198,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/size_small"
                         android:textColor="@color/primary"
+                        android:textSize="12sp"
                         app:chipBackgroundColor="@color/chip_background_selector" />
 
                     <com.google.android.material.chip.Chip
@@ -191,6 +209,7 @@
                         android:checked="true"
                         android:text="@string/size_medium"
                         android:textColor="@color/primary"
+                        android:textSize="12sp"
                         app:chipBackgroundColor="@color/chip_background_selector" />
 
                     <com.google.android.material.chip.Chip
@@ -200,30 +219,34 @@
                         android:layout_height="wrap_content"
                         android:text="@string/size_large"
                         android:textColor="@color/primary"
+                        android:textSize="12sp"
                         app:chipBackgroundColor="@color/chip_background_selector" />
                 </com.google.android.material.chip.ChipGroup>
 
+                <!-- Quantity and Add to Cart in the same row -->
                 <TextView
                     android:id="@+id/quantityLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="36dp"
+                    android:layout_marginTop="24dp"
                     android:text="@string/quantity"
-                    android:textSize="20sp"
                     android:textColor="@color/primary"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sizeGroup" />
+                    app:layout_constraintTop_toBottomOf="@+id/sizeLabel" />
 
-                <!-- Enhanced quantity selector with modern elevated card background -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/quantityCardView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="4dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/quantityLabel">
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="10dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/quantityLabel"
+                    app:layout_constraintStart_toEndOf="@+id/quantityLabel"
+                    app:layout_constraintTop_toTopOf="@+id/quantityLabel">
 
                     <LinearLayout
                         android:id="@+id/quantityLayout"
@@ -235,8 +258,8 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/decreaseButton"
                             style="@style/Widget.App.Button.IconOnly"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:insetLeft="0dp"
                             android:insetTop="0dp"
                             android:insetRight="0dp"
@@ -244,23 +267,23 @@
                             app:icon="@drawable/ic_minus"
                             app:iconGravity="textStart"
                             app:iconPadding="0dp"
-                            app:iconSize="24dp"
+                            app:iconSize="18dp"
                             app:iconTint="@color/primary" />
 
                         <TextView
                             android:id="@+id/quantityText"
-                            android:layout_width="60dp"
-                            android:layout_height="52dp"
+                            android:layout_width="40dp"
+                            android:layout_height="36dp"
                             android:gravity="center"
                             android:text="1"
-                            android:textSize="22sp"
-                            android:textColor="@color/primary" />
+                            android:textColor="@color/primary"
+                            android:textSize="16sp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/increaseButton"
                             style="@style/Widget.App.Button.IconOnly"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:insetLeft="0dp"
                             android:insetTop="0dp"
                             android:insetRight="0dp"
@@ -268,49 +291,53 @@
                             app:icon="@drawable/ic_plus"
                             app:iconGravity="textStart"
                             app:iconPadding="0dp"
-                            app:iconSize="24dp"
+                            app:iconSize="18dp"
                             app:iconTint="@color/primary" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Enhanced "Add to Cart" button with more premium design -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/addToCartButton"
+                <!-- Action Buttons in a row -->
+                <LinearLayout
+                    android:id="@+id/actionButtonsLayout"
                     android:layout_width="0dp"
-                    android:layout_height="68dp"
-                    android:layout_marginTop="48dp"
-                    android:text="@string/add_to_cart"
-                    android:textSize="18sp"
-                    app:icon="@drawable/ic_shopping_cart"
-                    app:iconGravity="textStart"
-                    app:iconSize="24dp"
-                    app:iconPadding="16dp"
-                    app:cornerRadius="24dp"
-                    app:elevation="6dp"
-                    android:backgroundTint="@color/primary"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/quantityCardView"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintTop_toBottomOf="@+id/quantityLabel">
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/addToCartButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="58dp"
+                        android:backgroundTint="@color/primary"
+                        android:text="@string/add_to_cart"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        app:cornerRadius="12dp"
+                        app:elevation="4dp"
+                        app:icon="@drawable/ic_shopping_cart"
+                        app:iconGravity="textStart"
+                        app:iconPadding="12dp"
+                        app:iconSize="20dp" />
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Enhanced back button with premium design -->
+    <!-- Back button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="18dp"
+        android:layout_margin="20dp"
         android:contentDescription="@string/back"
         app:tint="@color/white"
         android:backgroundTint="@color/primary"
         app:borderWidth="0dp"
-        app:elevation="8dp"
-        app:fabSize="normal"
+        app:elevation="4dp"
+        app:fabCustomSize="40dp"
+        app:maxImageSize="20dp"
         app:srcCompat="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
