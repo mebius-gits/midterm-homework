@@ -126,16 +126,28 @@ class FoodRepository private constructor() {
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems: StateFlow<List<CartItem>> = _cartItems.asStateFlow()
 
-    // Shop information
-    private val _shopInfo = MutableStateFlow(
-        ShopInfo(
-            name = "美食小館",
-            phone = "0912345678",
-            address = "台中市南區建國北路一段100號",
-            businessHours = "10:00 AM - 10:00 PM"
+    // Multiple shop information entries
+    private val _shopInfoList = MutableStateFlow<List<ShopInfo>>(
+        listOf(
+            ShopInfo.create(
+                id = 1,
+                name = "美食小館",
+                phone = "0912345678",
+                address = "台中市南區建國北路一段100號",
+                businessHours = "10:00 AM - 10:00 PM"
+            )
         )
     )
-    val shopInfo: StateFlow<ShopInfo> = _shopInfo.asStateFlow()
+    val shopInfoList: StateFlow<List<ShopInfo>> = _shopInfoList.asStateFlow()
+    
+    // Currently selected shop
+    private val _currentShopId = MutableStateFlow(1)
+    val currentShopId: StateFlow<Int> = _currentShopId.asStateFlow()
+    
+    // Current shop info for backward compatibility
+    val shopInfo: StateFlow<ShopInfo> = _shopInfoList.asStateFlow().let { flow ->
+        MutableStateFlow(flow.value.first())
+    }
 
     // Add item to cart
     fun addToCart(foodItem: FoodItem, quantity: Int, size: CartItem.Size) {
@@ -180,7 +192,50 @@ class FoodRepository private constructor() {
 
     // Update shop information
     fun updateShopInfo(shopInfo: ShopInfo) {
-        _shopInfo.value = shopInfo
+        _shopInfoList.update { currentList ->
+            currentList.map { 
+                if (it.id == shopInfo.id) shopInfo else it 
+            }
+        }
+    }
+    
+    // Add new shop
+    fun addShop(shopInfo: ShopInfo) {
+        _shopInfoList.update { currentList ->
+            currentList + shopInfo
+        }
+    }
+    
+    // Delete shop
+    fun deleteShop(shopId: Int) {
+        _shopInfoList.update { currentList ->
+            currentList.filter { it.id != shopId }
+        }
+        
+        // If the deleted shop was the current one, select another one if available
+        if (shopId == _currentShopId.value && _shopInfoList.value.isNotEmpty()) {
+            _currentShopId.value = _shopInfoList.value.first().id
+        }
+    }
+    
+    // Set current shop
+    fun setCurrentShop(shopId: Int) {
+        if (_shopInfoList.value.any { it.id == shopId }) {
+            _currentShopId.value = shopId
+        }
+    }
+    
+    // Get current shop info
+    fun getCurrentShopInfo(): ShopInfo {
+        return _shopInfoList.value.find { it.id == _currentShopId.value } 
+            ?: _shopInfoList.value.firstOrNull() 
+            ?: ShopInfo.create(
+                id = 0,
+                name = "",
+                phone = "", 
+                address = "",
+                businessHours = ""
+            )
     }
 
     // Calculate total price of all items in cart
@@ -191,6 +246,15 @@ class FoodRepository private constructor() {
     // Get menu items by category
     fun getMenuItemsByCategory(category: FoodItem.FoodCategory): List<FoodItem> {
         return menuItems.value.filter { it.category == category }
+    }
+
+    // Generate new unique shop ID
+    fun generateShopId(): Int {
+        return if (_shopInfoList.value.isEmpty()) {
+            1
+        } else {
+            _shopInfoList.value.maxOf { it.id } + 1
+        }
     }
 
     // Singleton pattern

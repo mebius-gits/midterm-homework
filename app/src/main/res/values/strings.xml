@@ -43,6 +43,7 @@
     <string name="address">地址：</string>
     <string name="business_hours">營業時間：</string>
     <string name="call">點擊撥打</string>
+    <string name="edit">編輯</string>
     
     <!-- Add Shop Info -->
     <string name="add_shop_info">新增商家資訊</string>
