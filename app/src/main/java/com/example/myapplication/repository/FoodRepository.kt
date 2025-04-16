@@ -1,5 +1,6 @@
 package com.example.myapplication.repository
 
+import com.example.myapplication.R
 import com.example.myapplication.model.CartItem
 import com.example.myapplication.model.FoodItem
 import com.example.myapplication.model.ShopInfo
@@ -22,7 +23,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.MAIN_DISH,
                 description = "特級牛肉搭配自製麵條和湯頭，香氣十足。",
                 rating = 4.5f,
-                price = 200.0
+                price = 200.0,
+                imageUrl = R.drawable.p000,
             ),
             FoodItem(
                 id = 2,
@@ -30,7 +32,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.MAIN_DISH,
                 description = "嚴選新鮮豬排，特調醬汁燉煮入味，搭配白飯更美味。",
                 rating = 4.0f,
-                price = 180.0
+                price = 180.0,
+                imageUrl = R.drawable.p001,
             ),
             FoodItem(
                 id = 3,
@@ -38,7 +41,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.MAIN_DISH,
                 description = "使用三杯醬汁烹調的嫩雞肉，香氣四溢、回味無窮。",
                 rating = 4.2f,
-                price = 160.0
+                price = 160.0,
+                imageUrl = R.drawable.p002,
             ),
             
             // Side dishes
@@ -48,7 +52,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.SIDE_DISH,
                 description = "酥脆多汁的雞翅，香辣可口。",
                 rating = 3.5f,
-                price = 100.0
+                price = 100.0,
+                imageUrl = R.drawable.p002,
             ),
             FoodItem(
                 id = 5,
@@ -56,7 +61,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.SIDE_DISH,
                 description = "新鮮馬鈴薯製成，外酥內軟，灑上特製蒜香調味粉。",
                 rating = 4.0f,
-                price = 90.0
+                price = 90.0,
+                imageUrl = R.drawable.p000,
             ),
             FoodItem(
                 id = 6,
@@ -64,7 +70,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.SIDE_DISH,
                 description = "清脆爽口的小黃瓜，淋上特調醬汁，開胃解膩。",
                 rating = 3.7f,
-                price = 60.0
+                price = 60.0,
+                imageUrl = R.drawable.p000,
             ),
             
             // Drinks
@@ -74,7 +81,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.DRINK,
                 description = "台灣特色飲品，香濃奶茶搭配QQ珍珠。",
                 rating = 5.0f,
-                price = 50.0
+                price = 50.0,
+                imageUrl = R.drawable.p000,
             ),
             FoodItem(
                 id = 8,
@@ -82,7 +90,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.DRINK,
                 description = "使用新鮮芒果製成，香甜清涼，炎夏必備。",
                 rating = 4.8f,
-                price = 70.0
+                price = 70.0,
+                imageUrl = R.drawable.p000,
             ),
             FoodItem(
                 id = 9,
@@ -90,7 +99,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.DRINK,
                 description = "清爽的綠茶搭配新鮮檸檬片，消暑解渴。",
                 rating = 4.2f,
-                price = 45.0
+                price = 45.0,
+                imageUrl = R.drawable.p000,
             ),
             
             // Others
@@ -100,7 +110,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.OTHER,
                 description = "每日新鮮製作的芋圓，搭配香濃奶茶和紅豆，口感豐富。",
                 rating = 4.5f,
-                price = 80.0
+                price = 80.0,
+                imageUrl = R.drawable.p000,
             ),
             FoodItem(
                 id = 11,
@@ -108,7 +119,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.OTHER,
                 description = "滑嫩的豆花，配上花生、紅豆等多種配料，甜度可調。",
                 rating = 4.3f,
-                price = 65.0
+                price = 65.0,
+                imageUrl = R.drawable.p000,
             ),
             FoodItem(
                 id = 12,
@@ -116,7 +128,8 @@ class FoodRepository private constructor() {
                 category = FoodItem.FoodCategory.OTHER,
                 description = "義式經典甜點，層次豐富，咖啡香濃郁。",
                 rating = 4.7f,
-                price = 90.0
+                price = 90.0,
+                imageUrl = R.drawable.p000,
             )
         )
     )

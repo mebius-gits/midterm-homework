@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.myapplication.databinding.FragmentItemDetailBinding
 import com.example.myapplication.model.CartItem
 import com.example.myapplication.model.FoodItem
@@ -126,7 +127,7 @@ class ItemDetailFragment : Fragment() {
             
             // For simplicity, we're not loading images from a URL in this example
             // In a real app, you'd use Glide or similar library
-            // Glide.with(requireContext()).load(foodItem.imageUrl).into(foodImage)
+            Glide.with(requireContext()).load(foodItem.imageUrl).into(foodImage)
         }
     }
     

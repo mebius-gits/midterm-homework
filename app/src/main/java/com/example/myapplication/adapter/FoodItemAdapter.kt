@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.myapplication.databinding.ItemFoodBinding
 import com.example.myapplication.model.FoodItem
 
@@ -55,7 +56,7 @@ class FoodItemAdapter(private val onItemClick: (FoodItem) -> Unit) :
                 
                 // For simplicity, we're not loading images from a URL in this example
                 // In a real app, you'd use Glide or similar library
-                // Glide.with(foodImage).load(foodItem.imageUrl).into(foodImage)
+                Glide.with(foodImage).load(foodItem.imageUrl).into(foodImage)
             }
         }
     }

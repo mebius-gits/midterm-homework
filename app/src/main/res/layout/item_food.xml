@@ -24,17 +24,18 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/imageContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
+            app:contentPadding="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/foodImage"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:contentDescription="Food image"
                 android:scaleType="centerCrop"
                 tools:src="@android:drawable/ic_menu_gallery" />

@@ -10,7 +10,7 @@ data class FoodItem(
     val description: String,
     val rating: Float, // Rating from 0 to 5
     val price: Double,
-    val imageUrl: String = "" // Placeholder for image
+    val imageUrl: Int, // Placeholder for image
 ) {
     enum class FoodCategory {
         MAIN_DISH, SIDE_DISH, DRINK, OTHER

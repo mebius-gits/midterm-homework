@@ -2,6 +2,12 @@
 
 A mobile application for ordering food from restaurants, built with Android and Kotlin.
 
+# member
+11156002 魏子宸
+11156019 潘安睿
+11156034 李承恩
+11156041 簡浩宇
+
 ## Features
 
 - Browse menu items by category (Main Dishes, Side Dishes, Drinks, Others)
