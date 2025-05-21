@@ -1,43 +1,49 @@
 package com.example.myapplication.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myapplication.database.DbDebugger
+import com.example.myapplication.database.ShopInfoRepository
 import com.example.myapplication.model.ShopInfo
 import com.example.myapplication.repository.FoodRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel for shop information screen
  */
-class ShopInfoViewModel : ViewModel() {
-    private val repository = FoodRepository.getInstance()
+class ShopInfoViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = FoodRepository.getInstance(application)
     
     // List of all shops
     val shopInfoList: StateFlow<List<ShopInfo>> = repository.shopInfoList
     
     // Current shop ID
     val currentShopId: StateFlow<Int> = repository.currentShopId
-    
-    // Current shop information
-    val currentShopInfo = repository.shopInfoList.map { shops ->
-        shops.find { it.id == repository.currentShopId.value } ?: ShopInfo(
-            id = 0,
-            name = "",
-            phone = "",
-            address = "",
-            businessHours = ""
+      // Current shop information - combine shopInfoList and currentShopId for reactive updates
+    val currentShopInfo = repository.shopInfoList
+        .combine(repository.currentShopId) { shops, currentId ->
+            shops.find { it.id == currentId } ?: ShopInfo(
+                id = 0,
+                name = "",
+                phone = "",
+                address = "",
+                businessHours = ""
+            )
+        }
+        .stateIn(
+            viewModelScope, 
+            SharingStarted.WhileSubscribed(5000), 
+            repository.getCurrentShopInfo()
         )
-    }.stateIn(
-        viewModelScope, 
-        SharingStarted.WhileSubscribed(5000), 
-        repository.getCurrentShopInfo()
-    )
-    
-    // Update shop information
+      // Update shop information
     fun updateShopInfo(
         name: String, 
         phone: String, 
@@ -45,42 +51,76 @@ class ShopInfoViewModel : ViewModel() {
         businessHours: String,
         shopId: Int = repository.currentShopId.value
     ) {
-        val updatedInfo = ShopInfo(
-            id = shopId,
-            name = name,
-            phone = phone,
-            address = address,
-            businessHours = businessHours
-        )
-        repository.updateShopInfo(updatedInfo)
+        viewModelScope.launch {
+            try {
+                val updatedInfo = ShopInfo(
+                    id = shopId,
+                    name = name,
+                    phone = phone,
+                    address = address,
+                    businessHours = businessHours
+                )
+                repository.updateShopInfo(updatedInfo)
+            } catch (e: Exception) {
+                // Log error or handle it
+                e.printStackTrace()
+            }
+        }
     }
-    
-    // Add new shop
+      // Add new shop
     fun addNewShop(
         name: String,
         phone: String,
         address: String,
         businessHours: String
     ) {
-        val newShopId = repository.generateShopId()
-        val newShop = ShopInfo(
-            id = newShopId,
-            name = name,
-            phone = phone,
-            address = address,
-            businessHours = businessHours
-        )
-        repository.addShop(newShop)
-        repository.setCurrentShop(newShopId)
+        viewModelScope.launch {
+            val newShopId = repository.generateShopId()
+            val newShop = ShopInfo(
+                id = newShopId,
+                name = name,
+                phone = phone,
+                address = address,
+                businessHours = businessHours
+            )
+            repository.addShop(newShop)
+            repository.setCurrentShop(newShopId)
+        }
+    }    // Delete shop
+    fun deleteShop(shopId: Int) {
+        viewModelScope.launch {
+            try {
+                // Log shop details before deletion for debugging
+                val shopBeforeDelete = repository.getCurrentShopInfo()
+                if (shopBeforeDelete.id == shopId) {
+                    // This is the current shop, make sure we handle it properly
+                    repository.deleteShop(shopId)
+                } else {
+                    // Not the current shop
+                    repository.deleteShop(shopId)
+                }
+            } catch (e: Exception) {
+                // Log error or handle it
+                e.printStackTrace()
+            }
+        }
     }
     
-    // Delete shop
-    fun deleteShop(shopId: Int) {
-        repository.deleteShop(shopId)
+    // Debug function to show all shops
+    fun debugShowAllShops(context: Context) {
+        viewModelScope.launch {
+            val shopInfoRepository = ShopInfoRepository(context)
+            DbDebugger.logAllShops(context, shopInfoRepository, true)
+        }
     }
     
     // Change current shop
     fun setCurrentShop(shopId: Int) {
         repository.setCurrentShop(shopId)
+        // Log the current shop info for debugging
+        viewModelScope.launch {
+            val shopInfo = repository.getCurrentShopInfo()
+            android.util.Log.d("ShopInfoViewModel", "Set current shop: $shopId, Shop: ${shopInfo.name}")
+        }
     }
 }

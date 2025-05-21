@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -18,15 +19,14 @@ import com.example.myapplication.model.CartItem
 import com.example.myapplication.model.FoodItem
 import com.example.myapplication.repository.FoodRepository
 import com.example.myapplication.viewmodel.MenuViewModel
+import com.example.myapplication.viewmodel.MenuViewModelFactory
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
-class ItemDetailFragment : Fragment() {
-
-    private var _binding: FragmentItemDetailBinding? = null
+class ItemDetailFragment : Fragment() {    private var _binding: FragmentItemDetailBinding? = null
     private val binding get() = _binding!!
     
-    private val viewModel: MenuViewModel by viewModels()
+    private lateinit var viewModel: MenuViewModel
     private val args: ItemDetailFragmentArgs by navArgs()
     
     override fun onCreateView(
@@ -37,12 +37,15 @@ class ItemDetailFragment : Fragment() {
         _binding = FragmentItemDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        // Initialize ViewModel with factory for AndroidViewModel
+        viewModel = ViewModelProvider(this, MenuViewModelFactory(requireActivity().application))
+            .get(MenuViewModel::class.java)
+            
         // Load food item details
-        val foodItem = FoodRepository.getInstance().menuItems.value.find { it.id == args.foodItemId }
+        val foodItem = FoodRepository.getInstance(requireContext()).menuItems.value.find { it.id == args.foodItemId }
         foodItem?.let { viewModel.selectFoodItem(it) }
         
         setupView()

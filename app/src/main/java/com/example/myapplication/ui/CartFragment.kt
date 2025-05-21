@@ -8,20 +8,20 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.adapter.CartItemAdapter
 import com.example.myapplication.databinding.FragmentCartBinding
 import com.example.myapplication.viewmodel.CartViewModel
+import com.example.myapplication.viewmodel.CartViewModelFactory
 import kotlinx.coroutines.launch
 
-class CartFragment : Fragment() {
-
-    private var _binding: FragmentCartBinding? = null
+class CartFragment : Fragment() {    private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
     
-    private val viewModel: CartViewModel by viewModels()
+    private lateinit var viewModel: CartViewModel
     private lateinit var adapter: CartItemAdapter
     
     override fun onCreateView(
@@ -32,10 +32,13 @@ class CartFragment : Fragment() {
         _binding = FragmentCartBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        // Initialize ViewModel with factory for AndroidViewModel
+        viewModel = ViewModelProvider(this, CartViewModelFactory(requireActivity().application))
+            .get(CartViewModel::class.java)
+            
         setupRecyclerView()
         setupListeners()
         observeViewModel()

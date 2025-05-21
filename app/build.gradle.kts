@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin") // Added Safe Args plugin
+    id("org.jetbrains.kotlin.kapt") // Added for Room annotation processing
 }
 
 android {
@@ -55,6 +56,9 @@ dependencies {
     val junitVersion = rootProject.extra["junitVersion"] as String
     val junitExtVersion = rootProject.extra["junitExtVersion"] as String
     val espressoCoreVersion = rootProject.extra["espressoCoreVersion"] as String
+    
+    // Room Database
+    val roomVersion = "2.6.1"
 
     implementation("androidx.core:core-ktx:$coreKtxVersion")
     implementation("androidx.appcompat:appcompat:$appcompatVersion")
@@ -74,9 +78,13 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:$recyclerviewVersion")
     implementation("androidx.cardview:cardview:$cardviewVersion")
     implementation("androidx.viewpager2:viewpager2:$viewpager2Version")
-    
-    // Image loading
+      // Image loading
     implementation("com.github.bumptech.glide:glide:$glideVersion")
+      // Room Database
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.22")
     
     testImplementation("junit:junit:$junitVersion")
     androidTestImplementation("androidx.test.ext:junit:$junitExtVersion")

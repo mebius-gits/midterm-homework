@@ -1,6 +1,7 @@
 package com.example.myapplication.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.model.CartItem
 import com.example.myapplication.model.FoodItem
@@ -14,8 +15,8 @@ import kotlinx.coroutines.flow.stateIn
 /**
  * ViewModel for the menu screen
  */
-class MenuViewModel : ViewModel() {
-    private val repository = FoodRepository.getInstance()
+class MenuViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = FoodRepository.getInstance(application)
 
     // Categories with their food items
     val mainDishes = repository.menuItems.map { items ->

@@ -1,18 +1,27 @@
 package com.example.myapplication.repository
 
+import android.content.Context
 import com.example.myapplication.R
+import com.example.myapplication.database.ShopInfoRepository
 import com.example.myapplication.model.CartItem
 import com.example.myapplication.model.FoodItem
 import com.example.myapplication.model.ShopInfo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /**
  * Repository for managing food menu and cart data
  */
-class FoodRepository private constructor() {
+class FoodRepository private constructor(context: Context) {
+    // Database repository for shop info
+    private val shopInfoRepository = ShopInfoRepository(context)
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
     // Sample food items
     private val _menuItems = MutableStateFlow<List<FoodItem>>(
         listOf(
@@ -137,20 +146,8 @@ class FoodRepository private constructor() {
 
     // Cart items
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
-    val cartItems: StateFlow<List<CartItem>> = _cartItems.asStateFlow()
-
-    // Multiple shop information entries
-    private val _shopInfoList = MutableStateFlow<List<ShopInfo>>(
-        listOf(
-            ShopInfo.create(
-                id = 1,
-                name = "美食小館",
-                phone = "0912345678",
-                address = "台中市南區建國北路一段100號",
-                businessHours = "10:00 AM - 10:00 PM"
-            )
-        )
-    )
+    val cartItems: StateFlow<List<CartItem>> = _cartItems.asStateFlow()    // Multiple shop information entries from database
+    private val _shopInfoList = MutableStateFlow<List<ShopInfo>>(emptyList())
     val shopInfoList: StateFlow<List<ShopInfo>> = _shopInfoList.asStateFlow()
     
     // Currently selected shop
@@ -158,8 +155,29 @@ class FoodRepository private constructor() {
     val currentShopId: StateFlow<Int> = _currentShopId.asStateFlow()
     
     // Current shop info for backward compatibility
-    val shopInfo: StateFlow<ShopInfo> = _shopInfoList.asStateFlow().let { flow ->
-        MutableStateFlow(flow.value.first())
+    val shopInfo: StateFlow<ShopInfo> = MutableStateFlow(
+        ShopInfo(
+            id = 1,
+            name = "",
+            phone = "",
+            address = "",
+            businessHours = ""
+        )
+    )
+
+    init {
+    // Initialize with shop info from database
+        coroutineScope.launch {
+            // Collect shop info from database
+            shopInfoRepository.getAllShops().collect { shops ->
+                _shopInfoList.value = shops
+                
+                // If there are any shops, update current shop ID if needed
+                if (shops.isNotEmpty() && (_currentShopId.value !in shops.map { it.id })) {
+                    _currentShopId.value = shops.first().id
+                }
+            }
+        }
     }
 
     // Add item to cart
@@ -201,33 +219,76 @@ class FoodRepository private constructor() {
                 if (it == cartItem) it.copy(quantity = newQuantity) else it
             }
         }
-    }
-
-    // Update shop information
+    }    // Update shop information
     fun updateShopInfo(shopInfo: ShopInfo) {
-        _shopInfoList.update { currentList ->
-            currentList.map { 
-                if (it.id == shopInfo.id) shopInfo else it 
+        coroutineScope.launch {
+            try {
+                // Update in database
+                val success = shopInfoRepository.updateShop(shopInfo)
+                if (success) {
+                    // Refresh shop list to update UI
+                    val updatedShops = shopInfoRepository.getAllShops().first()
+                    _shopInfoList.value = updatedShops
+                    
+                    // Log success
+                    android.util.Log.d("FoodRepository", "Shop updated successfully: ${shopInfo.name}")
+                } else {
+                    // Log or handle unsuccessful update
+                    android.util.Log.e("FoodRepository", "Failed to update shop with ID: ${shopInfo.id}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                android.util.Log.e("FoodRepository", "Error updating shop: ${e.message}")
             }
         }
     }
-    
-    // Add new shop
+      // Add new shop
     fun addShop(shopInfo: ShopInfo) {
-        _shopInfoList.update { currentList ->
-            currentList + shopInfo
+        coroutineScope.launch {
+            try {
+                // Insert into database
+                val id = shopInfoRepository.insertShop(shopInfo)
+                if (id > 0) {
+                    // Refresh shop list to update UI
+                    val updatedShops = shopInfoRepository.getAllShops().first()
+                    _shopInfoList.value = updatedShops
+                    
+                    // Log success
+                    android.util.Log.d("FoodRepository", "New shop added successfully: ${shopInfo.name}, ID: $id")
+                } else {
+                    android.util.Log.e("FoodRepository", "Failed to add shop: ${shopInfo.name}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                android.util.Log.e("FoodRepository", "Error adding shop: ${e.message}")
+            }
         }
-    }
-    
-    // Delete shop
+    }    // Delete shop
     fun deleteShop(shopId: Int) {
-        _shopInfoList.update { currentList ->
-            currentList.filter { it.id != shopId }
-        }
-        
-        // If the deleted shop was the current one, select another one if available
-        if (shopId == _currentShopId.value && _shopInfoList.value.isNotEmpty()) {
-            _currentShopId.value = _shopInfoList.value.first().id
+        coroutineScope.launch {
+            try {
+                // Delete from database
+                val success = shopInfoRepository.deleteShopById(shopId)
+                
+                if (success) {
+                    // Refresh shop list to update UI
+                    val updatedShops = shopInfoRepository.getAllShops().first()
+                    _shopInfoList.value = updatedShops
+                    
+                    // If the deleted shop was the current one, select another one if available
+                    if (shopId == _currentShopId.value && _shopInfoList.value.isNotEmpty()) {
+                        _currentShopId.value = _shopInfoList.value.first().id
+                    }
+                    
+                    android.util.Log.d("FoodRepository", "Shop deleted successfully: ID=$shopId")
+                } else {
+                    // Log or handle unsuccessful deletion
+                    android.util.Log.e("FoodRepository", "Failed to delete shop with ID: $shopId")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                android.util.Log.e("FoodRepository", "Error deleting shop: ${e.message}")
+            }
         }
     }
     
@@ -259,25 +320,17 @@ class FoodRepository private constructor() {
     // Get menu items by category
     fun getMenuItemsByCategory(category: FoodItem.FoodCategory): List<FoodItem> {
         return menuItems.value.filter { it.category == category }
-    }
-
-    // Generate new unique shop ID
-    fun generateShopId(): Int {
-        return if (_shopInfoList.value.isEmpty()) {
-            1
-        } else {
-            _shopInfoList.value.maxOf { it.id } + 1
-        }
-    }
-
-    // Singleton pattern
+    }    // Generate new unique shop ID
+    suspend fun generateShopId(): Int {
+        return shopInfoRepository.generateShopId()
+    }    // Singleton pattern
     companion object {
         @Volatile
         private var instance: FoodRepository? = null
 
-        fun getInstance(): FoodRepository {
+        fun getInstance(context: Context): FoodRepository {
             return instance ?: synchronized(this) {
-                instance ?: FoodRepository().also { instance = it }
+                instance ?: FoodRepository(context.applicationContext).also { instance = it }
             }
         }
     }

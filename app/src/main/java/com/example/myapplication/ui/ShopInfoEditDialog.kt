@@ -10,8 +10,11 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.databinding.DialogEditShopInfoBinding
 import com.example.myapplication.viewmodel.ShopInfoViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -78,29 +81,46 @@ class ShopInfoEditDialog(
     private fun updateCurrentTime() {
         val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
         val currentTime = dateFormat.format(Date())
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    }    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // Set dialog title
         binding.titleText.text = if (isNewShop) "新增商家" else "編輯商家資訊"
-        
-        // Populate fields with current shop info if editing
-        val currentShopInfo = if (isNewShop) {
-            null
-        } else {
-            viewModel.currentShopInfo.value
+          if (!isNewShop) {
+            // Show loading state
+            binding.apply {
+                submitButton.isEnabled = false
+                submitButton.text = "讀取資料中..."
+            }
+            
+            // Use viewLifecycleOwner to observe the StateFlow for current shop info
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    viewModel.currentShopInfo.collect { shopInfo ->
+                        // Log for debugging
+                        android.util.Log.d("ShopInfoEditDialog", "Received shop info: ${shopInfo.name}, ID: ${shopInfo.id}")
+                        
+                        // Populate fields with current shop info
+                        binding.apply {
+                            nameEditText.setText(shopInfo.name)
+                            phoneEditText.setText(shopInfo.phone)
+                            addressEditText.setText(shopInfo.address)
+                            businessHoursEditText.setText(shopInfo.businessHours)
+                            
+                            // Re-enable submit button
+                            submitButton.isEnabled = true
+                            submitButton.text = "儲存"
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("ShopInfoEditDialog", "Error collecting shop info", e)
+                    Toast.makeText(context, "讀取商家資訊失敗", Toast.LENGTH_SHORT).show()
+                    dismiss()
+                }
+            }
         }
         
         binding.apply {
-            // Populate fields if editing existing shop
-            if (currentShopInfo != null) {
-                nameEditText.setText(currentShopInfo.name)
-                phoneEditText.setText(currentShopInfo.phone)
-                addressEditText.setText(currentShopInfo.address)
-                businessHoursEditText.setText(currentShopInfo.businessHours)
-            }
 
             cancelButton.setOnClickListener {
                 dismiss()
@@ -111,7 +131,7 @@ class ShopInfoEditDialog(
                 val phone = phoneEditText.text.toString().trim()
                 val address = addressEditText.text.toString().trim()
                 val businessHours = businessHoursEditText.text.toString().trim()
-
+                
                 // Validate inputs
                 if (name.isEmpty() || phone.isEmpty() || address.isEmpty() || businessHours.isEmpty()) {
                     Toast.makeText(context, "請填寫所有必填欄位", Toast.LENGTH_SHORT).show()
@@ -120,24 +140,56 @@ class ShopInfoEditDialog(
 
                 // Add or update shop info
                 if (isNewShop) {
-                    viewModel.addNewShop(
-                        name = name,
-                        phone = phone,
-                        address = address,
-                        businessHours = businessHours
-                    )
-                    Toast.makeText(context, "商家已新增", Toast.LENGTH_SHORT).show()
+                    // Show loading state
+                    binding.submitButton.isEnabled = false
+                    binding.submitButton.text = "處理中..."
+                    try {
+                        viewModel.addNewShop(
+                            name = name,
+                            phone = phone,
+                            address = address,
+                            businessHours = businessHours
+                        )
+                        
+                        // Add a delay to ensure the add completes before showing message
+                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                            Toast.makeText(context, "商家「$name」已新增", Toast.LENGTH_SHORT).show()
+                            dismiss()
+                        }, 300)
+                    } catch (e: Exception) {
+                        android.util.Log.e("ShopInfoEditDialog", "Error adding shop", e)
+                        Toast.makeText(context, "新增商家時出錯，請再試一次", Toast.LENGTH_SHORT).show()
+                        
+                        // Re-enable the submit button
+                        binding.submitButton.isEnabled = true
+                        binding.submitButton.text = "儲存"
+                    }
                 } else {
-                    viewModel.updateShopInfo(
-                        name = name,
-                        phone = phone,
-                        address = address,
-                        businessHours = businessHours
-                    )
-                    Toast.makeText(context, "資訊已更新", Toast.LENGTH_SHORT).show()
+                    // Show loading state
+                    binding.submitButton.isEnabled = false
+                    binding.submitButton.text = "處理中..."
+                      try {
+                        viewModel.updateShopInfo(
+                            name = name,
+                            phone = phone,
+                            address = address,
+                            businessHours = businessHours
+                        )
+                        
+                        // Add a delay to ensure the update completes before showing message
+                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                            Toast.makeText(context, "「$name」資訊已更新", Toast.LENGTH_SHORT).show()
+                            dismiss()
+                        }, 300)
+                    } catch (e: Exception) {
+                        android.util.Log.e("ShopInfoEditDialog", "Error updating shop", e)
+                        Toast.makeText(context, "更新商家資訊時出錯，請再試一次", Toast.LENGTH_SHORT).show()
+                        
+                        // Re-enable the submit button
+                        binding.submitButton.isEnabled = true
+                        binding.submitButton.text = "儲存"
+                    }
                 }
-                
-                dismiss()
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.example.myapplication.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.model.CartItem
 import com.example.myapplication.repository.FoodRepository
@@ -12,8 +13,8 @@ import kotlinx.coroutines.flow.stateIn
 /**
  * ViewModel for the cart screen
  */
-class CartViewModel : ViewModel() {
-    private val repository = FoodRepository.getInstance()
+class CartViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = FoodRepository.getInstance(application)
     
     // Cart items
     val cartItems: StateFlow<List<CartItem>> = repository.cartItems

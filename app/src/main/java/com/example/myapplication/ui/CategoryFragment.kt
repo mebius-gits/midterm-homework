@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,15 +15,14 @@ import com.example.myapplication.adapter.FoodItemAdapter
 import com.example.myapplication.databinding.FragmentCategoryBinding
 import com.example.myapplication.model.FoodItem
 import com.example.myapplication.viewmodel.MenuViewModel
+import com.example.myapplication.viewmodel.MenuViewModelFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class CategoryFragment : Fragment() {
-
-    private var _binding: FragmentCategoryBinding? = null
+class CategoryFragment : Fragment() {    private var _binding: FragmentCategoryBinding? = null
     private val binding get() = _binding!!
     
-    private val viewModel: MenuViewModel by activityViewModels()
+    private lateinit var viewModel: MenuViewModel
     private val category: FoodItem.FoodCategory by lazy {
         arguments?.getSerializable(ARG_CATEGORY) as FoodItem.FoodCategory
     }
@@ -51,9 +51,12 @@ class CategoryFragment : Fragment() {
         _binding = FragmentCategoryBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        // Initialize ViewModel with factory for AndroidViewModel
+        viewModel = ViewModelProvider(requireActivity(), MenuViewModelFactory(requireActivity().application))
+            .get(MenuViewModel::class.java)
         
         setupRecyclerView()
         observeMenuItems()
