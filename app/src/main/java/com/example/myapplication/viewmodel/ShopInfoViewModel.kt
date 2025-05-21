@@ -21,21 +21,22 @@ import kotlinx.coroutines.launch
  */
 class ShopInfoViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = FoodRepository.getInstance(application)
-    
-    // List of all shops
+      // List of all shops
     val shopInfoList: StateFlow<List<ShopInfo>> = repository.shopInfoList
     
     // Current shop ID
     val currentShopId: StateFlow<Int> = repository.currentShopId
-      // Current shop information - combine shopInfoList and currentShopId for reactive updates
-    val currentShopInfo = repository.shopInfoList
+    
+    // Current shop information - combine shopInfoList and currentShopId for reactive updates
+    val currentShopInfo: StateFlow<ShopInfo> = repository.shopInfoList
         .combine(repository.currentShopId) { shops, currentId ->
-            shops.find { it.id == currentId } ?: ShopInfo(
+            shops.find { shop -> shop.id == currentId } ?: ShopInfo(
                 id = 0,
                 name = "",
                 phone = "",
                 address = "",
-                businessHours = ""
+                businessHours = "",
+                isFavorite = false
             )
         }
         .stateIn(
@@ -113,14 +114,29 @@ class ShopInfoViewModel(application: Application) : AndroidViewModel(application
             DbDebugger.logAllShops(context, shopInfoRepository, true)
         }
     }
-    
-    // Change current shop
+      // Change current shop
     fun setCurrentShop(shopId: Int) {
         repository.setCurrentShop(shopId)
         // Log the current shop info for debugging
         viewModelScope.launch {
             val shopInfo = repository.getCurrentShopInfo()
             android.util.Log.d("ShopInfoViewModel", "Set current shop: $shopId, Shop: ${shopInfo.name}")
+        }
+    }    // Toggle favorite status of a shop
+    fun toggleFavoriteShop(shopId: Int) {
+        viewModelScope.launch {
+            // Get current shop to show message with the name and new status
+            val shopList = repository.shopInfoList.value
+            val shop = shopList.find { shop -> shop.id == shopId }
+            val newStatus = !(shop?.isFavorite ?: false)
+            
+            repository.toggleFavoriteShop(shopId)
+            
+            // Show toast with the result
+            val context = getApplication<android.app.Application>().applicationContext
+            val message = if (newStatus) "已將「${shop?.name}」加入收藏"
+                         else "已將「${shop?.name}」移出收藏"
+            android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
         }
     }
 }

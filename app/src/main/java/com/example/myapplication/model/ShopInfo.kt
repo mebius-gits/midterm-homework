@@ -13,9 +13,9 @@ data class ShopInfo(
     val name: String,
     val phone: String,
     val address: String,
-    val businessHours: String
-) {
-    // Add a companion object to force the class structure to be different from the previous version
+    val businessHours: String,
+    val isFavorite: Boolean = false
+) {    // Add a companion object to force the class structure to be different from the previous version
     companion object {
         // Helper function to create a shop info instance, ensuring clean instantiation
         fun create(
@@ -23,9 +23,10 @@ data class ShopInfo(
             name: String,
             phone: String,
             address: String,
-            businessHours: String
+            businessHours: String,
+            isFavorite: Boolean = false
         ): ShopInfo {
-            return ShopInfo(id, name, phone, address, businessHours)
+            return ShopInfo(id, name, phone, address, businessHours, isFavorite)
         }
     }
 }

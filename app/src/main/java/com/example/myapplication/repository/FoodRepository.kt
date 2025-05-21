@@ -153,15 +153,15 @@ class FoodRepository private constructor(context: Context) {
     // Currently selected shop
     private val _currentShopId = MutableStateFlow(1)
     val currentShopId: StateFlow<Int> = _currentShopId.asStateFlow()
-    
-    // Current shop info for backward compatibility
+      // Current shop info for backward compatibility
     val shopInfo: StateFlow<ShopInfo> = MutableStateFlow(
         ShopInfo(
             id = 1,
             name = "",
             phone = "",
             address = "",
-            businessHours = ""
+            businessHours = "",
+            isFavorite = false
         )
     )
 
@@ -298,8 +298,7 @@ class FoodRepository private constructor(context: Context) {
             _currentShopId.value = shopId
         }
     }
-    
-    // Get current shop info
+      // Get current shop info
     fun getCurrentShopInfo(): ShopInfo {
         return _shopInfoList.value.find { it.id == _currentShopId.value } 
             ?: _shopInfoList.value.firstOrNull() 
@@ -308,13 +307,25 @@ class FoodRepository private constructor(context: Context) {
                 name = "",
                 phone = "", 
                 address = "",
-                businessHours = ""
+                businessHours = "",
+                isFavorite = false
             )
-    }
-
-    // Calculate total price of all items in cart
+    }// Calculate total price of all items in cart
     fun getCartTotal(): Double {
         return cartItems.value.sumOf { it.getTotalPrice() }
+    }
+    
+    // Toggle favorite status of a shop
+    fun toggleFavoriteShop(shopId: Int) {
+        coroutineScope.launch {
+            try {
+                shopInfoRepository.toggleFavorite(shopId)
+                // Update will be reflected in shopInfoList flow automatically
+            } catch (e: Exception) {
+                e.printStackTrace()
+                android.util.Log.e("FoodRepository", "Error toggling favorite: ${e.message}")
+            }
+        }
     }
 
     // Get menu items by category

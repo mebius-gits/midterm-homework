@@ -45,10 +45,21 @@ interface ShopInfoDao {
      */
     @Delete
     suspend fun deleteShop(shop: ShopInfo)
-    
-    /**
+      /**
      * Delete a shop by ID
      */
+    
+    /**
+     * Toggle favorite status for a shop
+     */
+    @Query("UPDATE shop_info SET isFavorite = CASE WHEN isFavorite = 1 THEN 0 ELSE 1 END WHERE id = :shopId")
+    suspend fun toggleFavorite(shopId: Int)
+    
+    /**
+     * Get all favorite shops
+     */
+    @Query("SELECT * FROM shop_info WHERE isFavorite = 1")
+    fun getFavoriteShops(): Flow<List<ShopInfo>>
     @Query("DELETE FROM shop_info WHERE id = :shopId")
     suspend fun deleteShopById(shopId: Int)
     

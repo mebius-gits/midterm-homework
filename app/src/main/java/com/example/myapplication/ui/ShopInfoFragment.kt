@@ -49,8 +49,7 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
         setupListeners()
         observeViewModel()
     }
-    
-    private fun setupRecyclerView() {
+      private fun setupRecyclerView() {
         shopListAdapter = ShopListAdapter(
             onShopClick = { /* Not needed for list-only view */ },
             onEditClick = { shop ->
@@ -61,6 +60,9 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
             },
             onCallClick = { phoneNumber ->
                 makePhoneCall(phoneNumber)
+            },
+            onFavoriteClick = { shop ->
+                viewModel.toggleFavoriteShop(shop.id)
             }
         )
         

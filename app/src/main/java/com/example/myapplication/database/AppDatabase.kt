@@ -9,7 +9,7 @@ import com.example.myapplication.model.ShopInfo
 /**
  * Room database for the application
  */
-@Database(entities = [ShopInfo::class], version = 1, exportSchema = false)
+@Database(entities = [ShopInfo::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     /**
      * Get the ShopInfoDao
@@ -25,13 +25,19 @@ abstract class AppDatabase : RoomDatabase() {
          * Creates the database if it doesn't exist
          */
         fun getDatabase(context: Context): AppDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
+            return INSTANCE ?: synchronized(this) {                val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
                 )
                 .fallbackToDestructiveMigration()
+                .addMigrations(
+                    object : androidx.room.migration.Migration(1, 2) {
+                        override fun migrate(database: androidx.sqlite.db.SupportSQLiteDatabase) {
+                            database.execSQL("ALTER TABLE shop_info ADD COLUMN isFavorite INTEGER NOT NULL DEFAULT 0")
+                        }
+                    }
+                )
                 .build()
                 
                 INSTANCE = instance

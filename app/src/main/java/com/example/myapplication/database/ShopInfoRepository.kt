@@ -127,8 +127,7 @@ class ShopInfoRepository(context: Context) {
             return false
         }
     }
-    
-    /**
+      /**
      * Generate a new shop ID
      */    suspend fun generateShopId(): Int {
         try {
@@ -139,5 +138,25 @@ class ShopInfoRepository(context: Context) {
             // Fallback to a safe default if there's a database error
             return System.currentTimeMillis().toInt() % 10000 + 1 // Use timestamp as a unique ID fallback
         }
+    }
+    
+    /**
+     * Toggle favorite status for a shop
+     */
+    suspend fun toggleFavorite(shopId: Int) {
+        try {
+            shopInfoDao.toggleFavorite(shopId)
+            android.util.Log.d("ShopInfoRepository", "Toggled favorite status for shop ID: $shopId")
+        } catch (e: Exception) {
+            android.util.Log.e("ShopInfoRepository", "Error toggling favorite status: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+    
+    /**
+     * Get all favorite shops
+     */
+    fun getFavoriteShops(): Flow<List<ShopInfo>> {
+        return shopInfoDao.getFavoriteShops()
     }
 }
