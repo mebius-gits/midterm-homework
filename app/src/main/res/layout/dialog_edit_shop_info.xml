@@ -38,8 +38,9 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="餐廳名稱"
-                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1">
+                android:hint="餐廳名稱"                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:helperText="@string/helper_name"
+                app:helperTextEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/nameEditText"
@@ -52,18 +53,15 @@
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:textSize="20sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
+            </com.google.android.material.textfield.TextInputLayout>            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/phoneLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:hint="@string/enter_phone"
-                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1">
-
-                <com.google.android.material.textfield.TextInputEditText
+                android:hint="@string/enter_phone"                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:helperText="@string/helper_phone"
+                app:helperTextEnabled="true">                <com.vicmikhailau.maskededittext.MaskedEditText
                     android:id="@+id/phoneEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -73,19 +71,20 @@
                     android:paddingEnd="16dp"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
-                    android:textSize="20sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
+                    android:textSize="20sp"
+                    app:mask="+##(###)###-####"
+                    android:hint="" />
+            </com.google.android.material.textfield.TextInputLayout>            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/addressLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:hint="@string/enter_address"
-                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1">
+                android:hint="@string/enter_address"                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:helperText="@string/helper_address"
+                app:helperTextEnabled="true">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <com.vicmikhailau.maskededittext.MaskedEditText
                     android:id="@+id/addressEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -96,18 +95,15 @@
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:textSize="20sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
+            </com.google.android.material.textfield.TextInputLayout>            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/businessHoursLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:hint="@string/enter_business_hours"
-                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1">
-
-                <com.google.android.material.textfield.TextInputEditText
+                android:hint="@string/enter_business_hours"                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:helperText="@string/helper_business_hours"
+                app:helperTextEnabled="true">                <com.vicmikhailau.maskededittext.MaskedEditText
                     android:id="@+id/businessHoursEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -117,7 +113,9 @@
                     android:paddingEnd="16dp"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    app:mask="##:## - ##:##"
+                    android:hint="" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>

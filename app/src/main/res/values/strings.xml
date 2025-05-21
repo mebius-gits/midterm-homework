@@ -46,9 +46,19 @@
     <string name="edit">編輯</string>
     
     <!-- Add Shop Info -->
-    <string name="add_shop_info">新增商家資訊</string>
-    <string name="enter_phone">請輸入電話</string>
+    <string name="add_shop_info">新增商家資訊</string>    <string name="enter_phone">請輸入電話</string>
     <string name="enter_address">請輸入地址</string>
     <string name="enter_business_hours">請輸入營業時間</string>
     <string name="submit">提交</string>
+    
+    <!-- Form Helper Texts -->
+    <string name="helper_phone">請按格式輸入有效的電話號碼</string>
+    <string name="helper_address">請輸入完整的地址資訊</string>
+    <string name="helper_business_hours">請使用24小時制格式 (例如: 09:00 - 18:00)</string>
+    <string name="helper_name">請輸入餐廳全名</string>
+    
+    <!-- Form Validation Messages -->
+    <string name="validation_phone">請輸入有效的電話號碼</string>
+    <string name="validation_business_hours">請以正確格式輸入營業時間 (例如: 09:00 - 18:00)</string>
+    <string name="validation_required_fields">請填寫所有必填欄位</string>
 </resources>

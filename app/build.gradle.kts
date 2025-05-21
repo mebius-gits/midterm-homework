@@ -77,14 +77,16 @@ dependencies {
     // UI Components
     implementation("androidx.recyclerview:recyclerview:$recyclerviewVersion")
     implementation("androidx.cardview:cardview:$cardviewVersion")
-    implementation("androidx.viewpager2:viewpager2:$viewpager2Version")
-      // Image loading
+    implementation("androidx.viewpager2:viewpager2:$viewpager2Version")      // Image loading
     implementation("com.github.bumptech.glide:glide:$glideVersion")
       // Room Database
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.22")
+    
+    // MaskedEditText for formatted input
+    implementation("io.github.vicmikhailau:MaskedEditText:4.0.7")
     
     testImplementation("junit:junit:$junitVersion")
     androidTestImplementation("androidx.test.ext:junit:$junitExtVersion")
