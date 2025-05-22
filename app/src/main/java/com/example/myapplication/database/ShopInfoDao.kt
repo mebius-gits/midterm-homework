@@ -62,10 +62,15 @@ interface ShopInfoDao {
     fun getFavoriteShops(): Flow<List<ShopInfo>>
     @Query("DELETE FROM shop_info WHERE id = :shopId")
     suspend fun deleteShopById(shopId: Int)
-    
-    /**
+      /**
      * Get the highest shop ID
      */
     @Query("SELECT MAX(id) FROM shop_info")
     suspend fun getMaxShopId(): Int?
+    
+    /**
+     * Update the rating for a shop
+     */
+    @Query("UPDATE shop_info SET rating = :rating WHERE id = :shopId")
+    suspend fun updateShopRating(shopId: Int, rating: Float)
 }

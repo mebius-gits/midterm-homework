@@ -41,39 +41,39 @@ class ShopInfoViewModel(application: Application) : AndroidViewModel(application
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             repository.getCurrentShopInfo()
-        )
-
-    // Update shop information
+        )    // Update shop information
     fun updateShopInfo(
         name: String,
         phone: String,
         address: String,
         businessHours: String,
+        rating: Float = 0f,
         shopId: Int = currentShopId.value
     ) {
         viewModelScope.launch {
             try {
+                val currentShop = repository.getCurrentShopInfo()
                 val updatedInfo = ShopInfo.create(
                     id = shopId,
                     name = name,
                     phone = phone,
                     address = address,
                     businessHours = businessHours,
-                    isFavorite = repository.getCurrentShopInfo().isFavorite // Preserve favorite status
+                    isFavorite = currentShop.isFavorite, // Preserve favorite status
+                    rating = rating
                 )
                 repository.updateShopInfo(updatedInfo)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-    }
-
-    // Add new shop
+    }    // Add new shop
     fun addNewShop(
         name: String,
         phone: String,
         address: String,
-        businessHours: String
+        businessHours: String,
+        rating: Float = 0f
     ) {
         viewModelScope.launch {
             val newShopId = repository.generateShopId()
@@ -83,7 +83,8 @@ class ShopInfoViewModel(application: Application) : AndroidViewModel(application
                 phone = phone,
                 address = address,
                 businessHours = businessHours,
-                isFavorite = false
+                isFavorite = false,
+                rating = rating
             )
             repository.addShop(newShop)
             repository.setCurrentShop(newShopId)

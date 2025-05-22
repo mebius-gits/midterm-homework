@@ -63,9 +63,7 @@
             app:layout_constraintEnd_toStartOf="@+id/actionButtonsLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shopPhoneText"
-            tools:text="地址：台中市南區建國北路一段100號" />
-
-        <TextView
+            tools:text="地址：台中市南區建國北路一段100號" />        <TextView
             android:id="@+id/shopBusinessHoursText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -74,6 +72,41 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shopAddressText"
             tools:text="營業時間：週一至週五 11:00-20:00" />
+
+        <LinearLayout
+            android:id="@+id/ratingContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toStartOf="@+id/actionButtonsLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/shopBusinessHoursText">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="評分："
+                android:textSize="14sp" />
+
+            <RatingBar
+                android:id="@+id/shopRatingBar"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:stepSize="0.5" />
+
+            <TextView
+                android:id="@+id/shopRatingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textSize="14sp"
+                tools:text="4.5" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/actionButtonsLayout"

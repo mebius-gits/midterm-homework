@@ -123,8 +123,7 @@ class ShopInfoEditDialog(
                     }
                     
                     // Ensure the fragment is still attached before updating UI
-                    if (isAdded && _binding != null) {
-                        // Populate fields with current shop info
+                    if (isAdded && _binding != null) {                    // Populate fields with current shop info
                         binding.apply {
                             nameEditText.setText(shopInfo.name)
                             
@@ -146,6 +145,10 @@ class ShopInfoEditDialog(
                             // Set address and business hours
                             addressEditText.setText(shopInfo.address)
                             businessHoursEditText.setText(shopInfo.businessHours)
+                            
+                            // Set the rating bar
+                            shopRatingBar.rating = shopInfo.rating
+                            ratingValueText.text = "目前評分：${String.format("%.1f", shopInfo.rating)}"
                             
                             // Re-enable submit button
                             submitButton.isEnabled = true
@@ -184,8 +187,7 @@ class ShopInfoEditDialog(
         // Remove all non-digit characters except +
         return phone.replace(Regex("[^0-9+]"), "")
     }
-    
-    /**
+      /**
      * Setup text watchers for real-time validation
      */
     private fun setupTextWatchers() {
@@ -213,10 +215,15 @@ class ShopInfoEditDialog(
                     }
                 }
             })
+            
+            // For rating bar changes
+            shopRatingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
+                // Update the rating text view
+                ratingValueText.text = "目前評分：${String.format("%.1f", rating)}"
+            }
         }
     }
-    
-    /**
+      /**
      * Handle form submission
      */
     private fun handleSubmit() {
@@ -235,6 +242,7 @@ class ShopInfoEditDialog(
         
         val address = binding.addressEditText.text.toString().trim()
         val businessHours = binding.businessHoursEditText.text.toString().trim()
+        val rating = binding.shopRatingBar.rating
         
         // Reset any previous error states
         binding.apply {
@@ -283,13 +291,13 @@ class ShopInfoEditDialog(
             // Show loading state
             binding.submitButton.isEnabled = false
             binding.submitButton.text = "處理中..."
-            
-            try {
+              try {
                 viewModel.addNewShop(
                     name = name,
                     phone = phone,
                     address = address,
-                    businessHours = businessHours
+                    businessHours = businessHours,
+                    rating = rating
                 )
                 
                 // Add a delay to ensure the add completes before showing message
@@ -310,12 +318,12 @@ class ShopInfoEditDialog(
             binding.submitButton.isEnabled = false
             binding.submitButton.text = "處理中..."
             
-            try {
-                viewModel.updateShopInfo(
+            try {                viewModel.updateShopInfo(
                     name = name,
                     phone = phone,
                     address = address,
-                    businessHours = businessHours
+                    businessHours = businessHours,
+                    rating = rating
                 )
                 
                 // Add a delay to ensure the update completes before showing message

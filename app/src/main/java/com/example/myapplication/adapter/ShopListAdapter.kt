@@ -51,10 +51,14 @@ class ShopListAdapter(
                 shopNameText.text = shop.name
                 shopPhoneText.text = "電話：${shop.phone}"
                 shopAddressText.text = "地址：${shop.address}"
-                shopBusinessHoursText.text = if (shop.businessHours.isNotEmpty()) 
+                shopBusinessHoursText.text = if (shop.businessHours.isNotEmpty())
                     "營業時間：${shop.businessHours}" 
                 else 
-                    "營業時間：未設定"                // Set favorite button state
+                    "營業時間：未設定"
+                
+                // Set rating
+                shopRatingBar.rating = shop.rating
+                shopRatingText.text = String.format("%.1f", shop.rating)// Set favorite button state
                 favoriteButton.setImageResource(
                     if (shop.isFavorite) R.drawable.ic_favorite_filled
                     else R.drawable.ic_favorite_border
