@@ -18,7 +18,11 @@ import com.example.myapplication.R
 import com.example.myapplication.databinding.DialogEditShopInfoBinding
 import com.example.myapplication.viewmodel.ShopInfoViewModel
 import com.vicmikhailau.maskededittext.MaskedEditText
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.util.Timer
 import java.util.TimerTask
 
@@ -33,6 +37,7 @@ class ShopInfoEditDialog(
     private var _binding: DialogEditShopInfoBinding? = null
     private val binding get() = _binding!!
     private var timer: Timer? = null
+    private var shopInfoJob: Job? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -98,13 +103,28 @@ class ShopInfoEditDialog(
                 submitButton.isEnabled = false
                 submitButton.text = "讀取資料中..."
             }
+              // Cancel any previous job
+            shopInfoJob?.cancel()
             
-            // Use viewLifecycleOwner to observe the StateFlow for current shop info
-            viewLifecycleOwner.lifecycleScope.launch {
-                try {
-                    viewModel.currentShopInfo.collect { shopInfo ->
-                        // Log for debugging
-                        android.util.Log.d("ShopInfoEditDialog", "Received shop info: ${shopInfo.name}, ID: ${shopInfo.id}")                        // Populate fields with current shop info
+            // Log the debug info
+            android.util.Log.d("ShopInfoEditDialog", "Starting to collect shop info...")
+            
+            // Use a flow-based approach with proper lifecycle handling
+            shopInfoJob = viewModel.currentShopInfo
+                .onEach { shopInfo ->
+                    // Enhanced debugging
+                    android.util.Log.d("ShopInfoEditDialog", "Received shop info: ${shopInfo.name}, ID: ${shopInfo.id}, Phone: ${shopInfo.phone}, Address: ${shopInfo.address}, Hours: ${shopInfo.businessHours}, Favorite: ${shopInfo.isFavorite}")
+                    
+                    // Check if we have valid shop info
+                    if (shopInfo.id == 0 && shopInfo.name.isEmpty()) {
+                        // This is an empty shop, possibly due to database error
+                        android.util.Log.e("ShopInfoEditDialog", "Received empty shop data")
+                        throw Exception("無法取得商家資料")
+                    }
+                    
+                    // Ensure the fragment is still attached before updating UI
+                    if (isAdded && _binding != null) {
+                        // Populate fields with current shop info
                         binding.apply {
                             nameEditText.setText(shopInfo.name)
                             
@@ -132,12 +152,17 @@ class ShopInfoEditDialog(
                             submitButton.text = "儲存"
                         }
                     }
-                } catch (e: Exception) {
-                    android.util.Log.e("ShopInfoEditDialog", "Error collecting shop info", e)
-                    Toast.makeText(context, "讀取商家資訊失敗", Toast.LENGTH_SHORT).show()
-                    dismiss()
+                }                .catch { e ->
+                    // Only show error if the fragment is still attached
+                    if (isAdded) {
+                        android.util.Log.e("ShopInfoEditDialog", "Error collecting shop info", e)
+                        if (e !is kotlinx.coroutines.CancellationException) {
+                            Toast.makeText(context, "讀取商家資料錯誤", Toast.LENGTH_SHORT).show()
+                            dismiss()
+                        }
+                    }
                 }
-            }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
           binding.apply {
 
@@ -314,6 +339,8 @@ class ShopInfoEditDialog(
         // Stop timer when dialog is dismissed
         timer?.cancel()
         timer = null
+        shopInfoJob?.cancel() // Cancel the coroutine job if it's still active
+        shopInfoJob = null
         _binding = null
     }
 }

@@ -130,11 +130,13 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
     private fun showAddShopDialog() {
         val dialog = ShopInfoEditDialog(viewModel, isNewShop = true)
         dialog.show(parentFragmentManager, "AddShopDialog")
-    }
-      private fun showEditDialog(shop: ShopInfo) {
+    }    private fun showEditDialog(shop: ShopInfo) {
         // Show a loading toast
         val loadingToast = Toast.makeText(context, "準備編輯: ${shop.name}", Toast.LENGTH_SHORT)
         loadingToast.show()
+        
+        // Log for debugging
+        android.util.Log.d("ShopInfoFragment", "Preparing to edit shop: ${shop.name}, ID: ${shop.id}")
         
         // First set current shop for the edit dialog and ensure it's loaded
         viewModel.setCurrentShop(shop.id)
@@ -142,9 +144,25 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
         // Use a small delay to ensure the data is set before opening the dialog
         view?.postDelayed({
             loadingToast.cancel()
-            val dialog = ShopInfoEditDialog(viewModel, isNewShop = false)
-            dialog.show(parentFragmentManager, "EditShopDialog")
-        }, 300) // Small delay to ensure data is ready
+            
+            // Verify that the shop was set correctly before opening the dialog
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val currentShopId = viewModel.currentShopId.value
+                    android.util.Log.d("ShopInfoFragment", "Current shop ID before opening dialog: $currentShopId (Expected: ${shop.id})")
+                    
+                    if (currentShopId == shop.id) {
+                        val dialog = ShopInfoEditDialog(viewModel, isNewShop = false)
+                        dialog.show(parentFragmentManager, "EditShopDialog")
+                    } else {
+                        Toast.makeText(context, "無法編輯，商家 ID 不符", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("ShopInfoFragment", "Error before opening dialog", e)
+                    Toast.makeText(context, "開啟編輯對話框時發生錯誤", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }, 500) // Increased delay to ensure data is ready
     }
       private fun confirmDeleteShop(shop: ShopInfo) {
         val dialog = AlertDialog.Builder(requireContext())

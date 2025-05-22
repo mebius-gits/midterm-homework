@@ -291,18 +291,41 @@ class FoodRepository private constructor(context: Context) {
             }
         }
     }
-    
-    // Set current shop
+      // Set current shop
     fun setCurrentShop(shopId: Int) {
+        android.util.Log.d("FoodRepository", "Setting current shop ID: $shopId")
+        android.util.Log.d("FoodRepository", "Available shop IDs: ${_shopInfoList.value.map { it.id }}")
+        
         if (_shopInfoList.value.any { it.id == shopId }) {
             _currentShopId.value = shopId
+            android.util.Log.d("FoodRepository", "Current shop ID set to: $shopId")
+        } else {
+            android.util.Log.w("FoodRepository", "Shop ID $shopId not found in available shops")
+            // If shop not found, but we have other shops, set to the first one
+            if (_shopInfoList.value.isNotEmpty()) {
+                _currentShopId.value = _shopInfoList.value.first().id
+                android.util.Log.d("FoodRepository", "Fallback: Set current shop ID to: ${_currentShopId.value}")
+            }
         }
-    }
-      // Get current shop info
+    }    // Get current shop info
     fun getCurrentShopInfo(): ShopInfo {
-        return _shopInfoList.value.find { it.id == _currentShopId.value } 
-            ?: _shopInfoList.value.firstOrNull() 
-            ?: ShopInfo.create(
+        // Log for debugging
+        android.util.Log.d("FoodRepository", "Getting current shop info, current ID: ${_currentShopId.value}")
+        android.util.Log.d("FoodRepository", "Available shops: ${_shopInfoList.value.size}")
+        
+        val shop = _shopInfoList.value.find { it.id == _currentShopId.value }
+        
+        if (shop != null) {
+            android.util.Log.d("FoodRepository", "Found current shop: ${shop.name}, ID: ${shop.id}")
+            return shop
+        } else if (_shopInfoList.value.isNotEmpty()) {
+            val firstShop = _shopInfoList.value.first()
+            android.util.Log.d("FoodRepository", "Current shop not found, using first available: ${firstShop.name}, ID: ${firstShop.id}")
+            _currentShopId.value = firstShop.id // Update current ID to match
+            return firstShop
+        } else {
+            android.util.Log.d("FoodRepository", "No shops available, returning empty shop")
+            return ShopInfo.create(
                 id = 0,
                 name = "",
                 phone = "", 
@@ -310,6 +333,7 @@ class FoodRepository private constructor(context: Context) {
                 businessHours = "",
                 isFavorite = false
             )
+        }
     }// Calculate total price of all items in cart
     fun getCartTotal(): Double {
         return cartItems.value.sumOf { it.getTotalPrice() }
