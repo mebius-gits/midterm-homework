@@ -145,12 +145,7 @@ class ShopInfoEditDialog(
                             // Set address and business hours
                             addressEditText.setText(shopInfo.address)
                             businessHoursEditText.setText(shopInfo.businessHours)
-                            
-                            // Set the rating bar
-                            shopRatingBar.rating = shopInfo.rating
-                            ratingValueText.text = "目前評分：${String.format("%.1f", shopInfo.rating)}"
-                            
-                            // Re-enable submit button
+                              // Re-enable submit button
                             submitButton.isEnabled = true
                             submitButton.text = "儲存"
                         }
@@ -203,8 +198,7 @@ class ShopInfoEditDialog(
                     }
                 }
             })
-            
-            // For business hours validation
+              // For business hours validation
             businessHoursEditText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -215,12 +209,6 @@ class ShopInfoEditDialog(
                     }
                 }
             })
-            
-            // For rating bar changes
-            shopRatingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
-                // Update the rating text view
-                ratingValueText.text = "目前評分：${String.format("%.1f", rating)}"
-            }
         }
     }
       /**
@@ -236,13 +224,11 @@ class ShopInfoEditDialog(
         } catch (e: Exception) {
             binding.phoneEditText.text.toString().trim()
         }
-        
-        // Normalize the phone number (remove formatting characters)
+          // Normalize the phone number (remove formatting characters)
         val phone = normalizePhoneNumber(phoneText)
         
         val address = binding.addressEditText.text.toString().trim()
         val businessHours = binding.businessHoursEditText.text.toString().trim()
-        val rating = binding.shopRatingBar.rating
         
         // Reset any previous error states
         binding.apply {
@@ -291,13 +277,11 @@ class ShopInfoEditDialog(
             // Show loading state
             binding.submitButton.isEnabled = false
             binding.submitButton.text = "處理中..."
-              try {
-                viewModel.addNewShop(
+              try {                viewModel.addNewShop(
                     name = name,
                     phone = phone,
                     address = address,
-                    businessHours = businessHours,
-                    rating = rating
+                    businessHours = businessHours
                 )
                 
                 // Add a delay to ensure the add completes before showing message
@@ -322,8 +306,7 @@ class ShopInfoEditDialog(
                     name = name,
                     phone = phone,
                     address = address,
-                    businessHours = businessHours,
-                    rating = rating
+                    businessHours = businessHours
                 )
                 
                 // Add a delay to ensure the update completes before showing message

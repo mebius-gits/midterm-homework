@@ -15,7 +15,8 @@ class ShopListAdapter(
     private val onEditClick: (ShopInfo) -> Unit,
     private val onDeleteClick: (ShopInfo) -> Unit,
     private val onCallClick: (String) -> Unit,
-    private val onFavoriteClick: (ShopInfo) -> Unit
+    private val onFavoriteClick: (ShopInfo) -> Unit,
+    private val onRatingChanged: (ShopInfo, Float) -> Unit = { _, _ -> }
 ) : RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
 
     private val shops = mutableListOf<ShopInfo>()
@@ -44,8 +45,7 @@ class ShopListAdapter(
     }
 
     inner class ViewHolder(private val binding: ItemShopListBinding) : 
-            RecyclerView.ViewHolder(binding.root) {
-          fun bind(shop: ShopInfo, isSelected: Boolean) {
+            RecyclerView.ViewHolder(binding.root) {          fun bind(shop: ShopInfo, isSelected: Boolean) {
             binding.apply {
                 // Set shop information
                 shopNameText.text = shop.name
@@ -58,7 +58,16 @@ class ShopListAdapter(
                 
                 // Set rating
                 shopRatingBar.rating = shop.rating
-                shopRatingText.text = String.format("%.1f", shop.rating)// Set favorite button state
+                shopRatingText.text = String.format("%.1f", shop.rating)
+                
+                // Set up rating bar change listener
+                shopRatingBar.setOnRatingBarChangeListener { _, rating, fromUser ->
+                    if (fromUser) {
+                        onRatingChanged(shop, rating)
+                    }
+                }
+                
+                // Set favorite button state
                 favoriteButton.setImageResource(
                     if (shop.isFavorite) R.drawable.ic_favorite_filled
                     else R.drawable.ic_favorite_border

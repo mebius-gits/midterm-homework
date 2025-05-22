@@ -159,4 +159,30 @@ class ShopInfoRepository(context: Context) {
     fun getFavoriteShops(): Flow<List<ShopInfo>> {
         return shopInfoDao.getFavoriteShops()
     }
+    
+    /**
+     * Update the rating of a shop
+     */
+    suspend fun updateRating(shopId: Int, rating: Float) {
+        try {
+            // Log the rating update attempt
+            android.util.Log.d("ShopInfoRepository", "Attempting to update rating for shop ID: $shopId to $rating")
+            
+            // Check if the shop exists
+            val existingShop = shopInfoDao.getShopById(shopId)
+            if (existingShop == null) {
+                android.util.Log.e("ShopInfoRepository", "Failed to update rating: shop with ID $shopId doesn't exist")
+                return
+            }
+            
+            // Update the rating
+            shopInfoDao.updateShopRating(shopId, rating)
+            
+            // Log the successful update
+            android.util.Log.d("ShopInfoRepository", "Successfully updated rating for shop ID: $shopId to $rating")
+        } catch (e: Exception) {
+            android.util.Log.e("ShopInfoRepository", "Error updating shop rating: ${e.message}")
+            e.printStackTrace()
+        }
+    }
 }

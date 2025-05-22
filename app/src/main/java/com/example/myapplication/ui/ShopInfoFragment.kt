@@ -49,8 +49,7 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
         setupListeners()
         observeViewModel()
     }
-      private fun setupRecyclerView() {
-        shopListAdapter = ShopListAdapter(
+      private fun setupRecyclerView() {        shopListAdapter = ShopListAdapter(
             onShopClick = { /* Not needed for list-only view */ },
             onEditClick = { shop ->
                 showEditDialog(shop)
@@ -63,6 +62,9 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
             },
             onFavoriteClick = { shop ->
                 viewModel.toggleFavoriteShop(shop.id)
+            },
+            onRatingChanged = { shop, rating ->
+                viewModel.updateShopRating(shop.id, rating)
             }
         )
         
@@ -103,11 +105,10 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
                         android.util.Log.d("ShopInfoFragment", "Shop list updated. Count: ${shops.size}")
                     }
                 }
-                
-                // Also observe current shop info to log changes
+                  // Also observe current shop info to log changes
                 launch {
-                    viewModel.currentShopInfo.collect { shop ->
-                        android.util.Log.d("ShopInfoFragment", "Current shop changed: ${shop.name}, ID: ${shop.id}")
+                    viewModel.currentShopId.collect { shopId ->
+                        android.util.Log.d("ShopInfoFragment", "Current shop ID changed to: $shopId")
                     }
                 }
             }

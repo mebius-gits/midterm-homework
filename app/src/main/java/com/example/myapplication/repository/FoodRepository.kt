@@ -358,6 +358,23 @@ class FoodRepository private constructor(context: Context) {
     }    // Generate new unique shop ID
     suspend fun generateShopId(): Int {
         return shopInfoRepository.generateShopId()
+    }    // Update shop rating
+    fun updateShopRating(shopId: Int, rating: Float) {
+        coroutineScope.launch {
+            try {
+                // Update in database
+                shopInfoRepository.updateRating(shopId, rating)
+                
+                // Refresh shop list to update UI
+                val updatedShops = shopInfoRepository.getAllShops().first()
+                _shopInfoList.value = updatedShops
+                
+                android.util.Log.d("FoodRepository", "Shop rating updated successfully: ID=$shopId, Rating=$rating")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                android.util.Log.e("FoodRepository", "Error updating shop rating: ${e.message}")
+            }
+        }
     }    // Singleton pattern
     companion object {
         @Volatile

@@ -116,45 +116,7 @@
                     android:textSize="20sp"
                     app:mask="##:## - ##:##"
                     android:hint="" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Rating Bar Section -->
-            <LinearLayout
-                android:id="@+id/ratingLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="店家評分"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp"
-                    android:paddingStart="4dp" />
-
-                <RatingBar
-                    android:id="@+id/shopRatingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:numStars="5"
-                    android:stepSize="0.5"
-                    android:rating="0"
-                    android:progressTint="#FFC107"
-                    android:secondaryProgressTint="#FFC107"
-                    android:progressBackgroundTint="#CCCCCC" />
-
-                <TextView
-                    android:id="@+id/ratingValueText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="目前評分：0.0"
-                    android:textAlignment="center"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>            <!-- Rating Bar Section removed as requested -->
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
