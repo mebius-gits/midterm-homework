@@ -185,4 +185,30 @@ class ShopInfoRepository(context: Context) {
             e.printStackTrace()
         }
     }
+      /**
+     * Update a shop's image URI
+     * @return true if update was successful
+     */
+    suspend fun updateShopImage(shopId: Int, imageUri: String): Boolean {
+        try {
+            // Log the update attempt
+            android.util.Log.d("ShopInfoRepository", "Attempting to update shop image: ID=$shopId, ImageURI=$imageUri")
+            
+            // First check if the shop exists
+            val shopExists = shopInfoDao.getShopById(shopId) != null
+            
+            if (shopExists) {
+                shopInfoDao.updateShopImage(shopId, imageUri)
+                android.util.Log.d("ShopInfoRepository", "Shop image updated successfully: ID=$shopId")
+                return true
+            } else {
+                android.util.Log.e("ShopInfoRepository", "Failed to update image: Shop with ID $shopId not found")
+                return false
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("ShopInfoRepository", "Error updating shop image: ${e.message}", e)
+            e.printStackTrace()
+            return false
+        }
+    }
 }

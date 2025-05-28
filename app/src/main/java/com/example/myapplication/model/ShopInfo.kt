@@ -12,11 +12,12 @@ data class ShopInfo(
     val id: Int = 0,
     val name: String,
     val phone: String,
-    val address: String,
-    val businessHours: String,
+    val address: String,    val businessHours: String,
     val isFavorite: Boolean = false,
-    val rating: Float = 0f
-) {    // Add a companion object to force the class structure to be different from the previous version
+    val rating: Float = 0f,
+    @androidx.room.ColumnInfo(name = "image_uri")    val imageUri: String = "" // Added field for storing image URI
+) {
+    // Add a companion object to force the class structure to be different from the previous version
     companion object {
         // Helper function to create a shop info instance, ensuring clean instantiation
         fun create(
@@ -26,9 +27,10 @@ data class ShopInfo(
             address: String,
             businessHours: String,
             isFavorite: Boolean = false,
-            rating: Float = 0f
+            rating: Float = 0f,
+            imageUri: String = "" // Added parameter for image URI
         ): ShopInfo {
-            return ShopInfo(id, name, phone, address, businessHours, isFavorite, rating)
+            return ShopInfo(id, name, phone, address, businessHours, isFavorite, rating, imageUri)
         }
     }
 }

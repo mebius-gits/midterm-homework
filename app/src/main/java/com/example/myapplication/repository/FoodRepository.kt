@@ -375,6 +375,28 @@ class FoodRepository private constructor(context: Context) {
                 android.util.Log.e("FoodRepository", "Error updating shop rating: ${e.message}")
             }
         }
+    }    // Update shop image URI
+    fun updateShopImage(shopId: Int, imageUri: String) {
+        coroutineScope.launch {
+            try {
+                // Update in database
+                val success = shopInfoRepository.updateShopImage(shopId, imageUri)
+                if (success) {
+                    // Refresh shop list to update UI
+                    val updatedShops = shopInfoRepository.getAllShops().first()
+                    _shopInfoList.value = updatedShops
+                    
+                    // Log success
+                    android.util.Log.d("FoodRepository", "Shop image updated successfully for ID: $shopId, URI: $imageUri")
+                } else {
+                    // Log or handle unsuccessful update
+                    android.util.Log.e("FoodRepository", "Failed to update image for shop with ID: $shopId")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                android.util.Log.e("FoodRepository", "Error updating shop image: ${e.message}")
+            }
+        }
     }    // Singleton pattern
     companion object {
         @Volatile

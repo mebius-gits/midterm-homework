@@ -4,26 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
-
-    <!-- Hero image with parallax effect -->
-    <ImageView
-        android:id="@+id/foodImage"
+    android:background="@color/background">    <!-- Hero image with parallax effect and rounded corners -->    <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="220dp"
-        android:contentDescription="Food image"
-        android:scaleType="centerCrop"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        android:clipChildren="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@android:drawable/ic_menu_gallery" />
-        
-    <!-- Gradient scrim overlay -->
+        app:layout_constraintTop_toTopOf="parent"><ImageView
+            android:id="@+id/foodImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Food image"
+            android:scaleType="centerCrop"
+            android:background="@drawable/rounded_image_corners"
+            android:clipToOutline="true"
+            android:outlineProvider="background"
+            tools:src="@android:drawable/ic_menu_gallery" />
+    </androidx.cardview.widget.CardView>
+          <!-- Gradient scrim overlay with rounded corners -->
     <View
         android:id="@+id/imageScrim"
-        android:layout_width="wrap_content"
-        android:layout_height="238dp"
+        android:layout_width="0dp"
+        android:layout_height="220dp"
         android:background="@drawable/gradient_scrim"
+        android:clipToOutline="true"
+        android:outlineProvider="background"
         app:layout_constraintBottom_toBottomOf="@id/foodImage"
         app:layout_constraintEnd_toEndOf="@id/foodImage"
         app:layout_constraintStart_toStartOf="@id/foodImage"

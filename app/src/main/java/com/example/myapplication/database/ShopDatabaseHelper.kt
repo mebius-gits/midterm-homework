@@ -16,9 +16,8 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
     DATABASE_NAME,
     null,
     DATABASE_VERSION
-) {    companion object {
-        private const val DATABASE_NAME = "shop_database"
-        private const val DATABASE_VERSION = 2
+) {    companion object {        private const val DATABASE_NAME = "shop_database"
+        private const val DATABASE_VERSION = 4 // Incremented version for the database schema change
         private const val TABLE_SHOPS = "shops"
         
         // Column names
@@ -28,6 +27,8 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
         private const val COLUMN_ADDRESS = "address"
         private const val COLUMN_BUSINESS_HOURS = "business_hours"
         private const val COLUMN_IS_FAVORITE = "is_favorite"
+        private const val COLUMN_RATING = "rating"
+        private const val COLUMN_IMAGE_URI = "image_uri" // New column for storing image URI
     }
       override fun onCreate(db: SQLiteDatabase) {
         val createTableQuery = """
@@ -37,7 +38,9 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
                 $COLUMN_PHONE TEXT,
                 $COLUMN_ADDRESS TEXT,
                 $COLUMN_BUSINESS_HOURS TEXT,
-                $COLUMN_IS_FAVORITE INTEGER DEFAULT 0
+                $COLUMN_IS_FAVORITE INTEGER DEFAULT 0,
+                $COLUMN_RATING REAL DEFAULT 0,
+                $COLUMN_IMAGE_URI TEXT DEFAULT ''
             )
         """.trimIndent()
         
@@ -60,6 +63,50 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
                 onCreate(db)
             }
         }
+          if (oldVersion < 3) {
+            // Add IMAGE_URI and RATING columns if upgrading from version 2 to 3
+            try {
+                db.execSQL("ALTER TABLE $TABLE_SHOPS ADD COLUMN $COLUMN_RATING REAL DEFAULT 0")
+                db.execSQL("ALTER TABLE $TABLE_SHOPS ADD COLUMN $COLUMN_IMAGE_URI TEXT DEFAULT ''")
+                Log.d("ShopDatabaseHelper", "Successfully added $COLUMN_RATING and $COLUMN_IMAGE_URI columns")
+            } catch (e: Exception) {
+                Log.e("ShopDatabaseHelper", "Error adding new columns", e)
+                // If column addition fails, recreate the table (data loss will occur)
+                db.execSQL("DROP TABLE IF EXISTS $TABLE_SHOPS")
+                onCreate(db)
+            }
+        }
+          if (oldVersion < 4) {
+            // Handle migration from version 3 to 4
+            // Check if the image_uri column exists and add it if necessary
+            try {
+                // Check if image_uri column already exists
+                val cursor = db.rawQuery("PRAGMA table_info($TABLE_SHOPS)", null)
+                var hasImageUri = false
+                
+                while (cursor.moveToNext()) {
+                    val columnName = cursor.getString(cursor.getColumnIndex("name"))
+                    if (columnName == COLUMN_IMAGE_URI) {
+                        hasImageUri = true
+                        break
+                    }
+                }
+                cursor.close()
+                
+                // Add the column if it doesn't exist
+                if (!hasImageUri) {
+                    db.execSQL("ALTER TABLE $TABLE_SHOPS ADD COLUMN $COLUMN_IMAGE_URI TEXT DEFAULT ''")
+                    Log.d("ShopDatabaseHelper", "Added missing $COLUMN_IMAGE_URI column during migration to version 4")
+                }
+                
+                Log.d("ShopDatabaseHelper", "Successfully migrated from version 3 to 4")
+            } catch (e: Exception) {
+                Log.e("ShopDatabaseHelper", "Error migrating to version 4", e)
+                // In case of a critical error, consider recreating the table
+                // db.execSQL("DROP TABLE IF EXISTS $TABLE_SHOPS")
+                // onCreate(db)
+            }
+        }
     }
       /**
      * Insert a new shop into the database
@@ -76,6 +123,8 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
             put(COLUMN_ADDRESS, shop.address)
             put(COLUMN_BUSINESS_HOURS, shop.businessHours)
             put(COLUMN_IS_FAVORITE, if (shop.isFavorite) 1 else 0)
+            put(COLUMN_RATING, shop.rating)
+            put(COLUMN_IMAGE_URI, shop.imageUri)
         }
         
         return db.insert(TABLE_SHOPS, null, values)
@@ -97,6 +146,8 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
             val addressColumnIndex = cursor.getColumnIndex(COLUMN_ADDRESS)
             val businessHoursColumnIndex = cursor.getColumnIndex(COLUMN_BUSINESS_HOURS)
             val isFavoriteColumnIndex = cursor.getColumnIndex(COLUMN_IS_FAVORITE)
+            val ratingColumnIndex = cursor.getColumnIndex(COLUMN_RATING)
+            val imageUriColumnIndex = cursor.getColumnIndex(COLUMN_IMAGE_URI)
             
             do {
                 val id = cursor.getInt(idColumnIndex)
@@ -105,6 +156,8 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
                 val address = cursor.getString(addressColumnIndex)
                 val businessHours = cursor.getString(businessHoursColumnIndex)
                 val isFavorite = if (isFavoriteColumnIndex != -1) cursor.getInt(isFavoriteColumnIndex) == 1 else false
+                val rating = if (ratingColumnIndex != -1) cursor.getFloat(ratingColumnIndex) else 0f
+                val imageUri = if (imageUriColumnIndex != -1) cursor.getString(imageUriColumnIndex) ?: "" else ""
                 
                 val shop = ShopInfo(
                     id = id,
@@ -112,7 +165,9 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
                     phone = phone,
                     address = address,
                     businessHours = businessHours,
-                    isFavorite = isFavorite
+                    isFavorite = isFavorite,
+                    rating = rating,
+                    imageUri = imageUri
                 )
                 shopList.add(shop)
             } while (cursor.moveToNext())
@@ -145,6 +200,8 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
             val addressColumnIndex = cursor.getColumnIndex(COLUMN_ADDRESS)
             val businessHoursColumnIndex = cursor.getColumnIndex(COLUMN_BUSINESS_HOURS)
             val isFavoriteColumnIndex = cursor.getColumnIndex(COLUMN_IS_FAVORITE)
+            val ratingColumnIndex = cursor.getColumnIndex(COLUMN_RATING)
+            val imageUriColumnIndex = cursor.getColumnIndex(COLUMN_IMAGE_URI)
             
             val id = cursor.getInt(idColumnIndex)
             val name = cursor.getString(nameColumnIndex)
@@ -152,6 +209,8 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
             val address = cursor.getString(addressColumnIndex)
             val businessHours = cursor.getString(businessHoursColumnIndex)
             val isFavorite = if (isFavoriteColumnIndex != -1) cursor.getInt(isFavoriteColumnIndex) == 1 else false
+            val rating = if (ratingColumnIndex != -1) cursor.getFloat(ratingColumnIndex) else 0f
+            val imageUri = if (imageUriColumnIndex != -1) cursor.getString(imageUriColumnIndex) ?: "" else ""
             
             shop = ShopInfo(
                 id = id,
@@ -159,7 +218,9 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
                 phone = phone,
                 address = address,
                 businessHours = businessHours,
-                isFavorite = isFavorite
+                isFavorite = isFavorite,
+                rating = rating,
+                imageUri = imageUri
             )
         }
         
@@ -177,6 +238,8 @@ class ShopDatabaseHelper(context: Context) : SQLiteOpenHelper(
             put(COLUMN_ADDRESS, shop.address)
             put(COLUMN_BUSINESS_HOURS, shop.businessHours)
             put(COLUMN_IS_FAVORITE, if (shop.isFavorite) 1 else 0)
+            put(COLUMN_RATING, shop.rating)
+            put(COLUMN_IMAGE_URI, shop.imageUri)
         }
         
         return db.update(

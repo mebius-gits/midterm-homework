@@ -5,16 +5,40 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="4dp"
-    app:cardCornerRadius="8dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="439dp"
         android:paddingStart="16dp"
         android:paddingTop="14dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="14dp">
+        android:paddingBottom="14dp">        <!-- Shop Image with all corners rounded -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/shopImageCardView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="24dp"
+            android:clipChildren="true"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ratingContainer"
+            app:layout_constraintVertical_bias="1.0">
+
+            <ImageView
+                android:id="@+id/shopImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToOutline="true"
+                android:contentDescription="店家圖片"
+                android:outlineProvider="background"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_image_placeholder" />
+        </androidx.cardview.widget.CardView>
 
         <ImageButton
             android:id="@+id/favoriteButton"
@@ -63,7 +87,9 @@
             app:layout_constraintEnd_toStartOf="@+id/actionButtonsLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shopPhoneText"
-            tools:text="地址：台中市南區建國北路一段100號" />        <TextView
+            tools:text="地址：台中市南區建國北路一段100號" />
+
+        <TextView
             android:id="@+id/shopBusinessHoursText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -78,8 +104,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toStartOf="@+id/actionButtonsLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shopBusinessHoursText">
@@ -88,7 +114,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="評分："
-                android:textSize="14sp" />            <RatingBar
+                android:textSize="14sp" />
+
+            <RatingBar
                 android:id="@+id/shopRatingBar"
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
@@ -111,7 +139,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -124,6 +151,16 @@
                 android:contentDescription="編輯店家資訊"
                 android:src="@android:drawable/ic_menu_edit"
                 app:tint="@android:color/holo_blue_dark" />
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginBottom="10dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="上傳店家圖片"
+                android:src="@android:drawable/ic_menu_camera"
+                app:tint="@android:color/holo_green_dark" />
 
             <ImageButton
                 android:id="@+id/deleteButton"

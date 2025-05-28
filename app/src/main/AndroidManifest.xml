@@ -4,6 +4,10 @@
 
     <!-- Permission for making phone calls -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    
+    <!-- Permissions for accessing images -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
         android:name=".MyApplication"

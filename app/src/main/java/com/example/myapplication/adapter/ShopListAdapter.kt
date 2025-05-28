@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemShopListBinding
 import com.example.myapplication.model.ShopInfo
+import com.example.myapplication.util.loadImageWithRoundedCorners
 
 /**
  * Adapter for displaying shops in a list
@@ -16,6 +17,7 @@ class ShopListAdapter(
     private val onDeleteClick: (ShopInfo) -> Unit,
     private val onCallClick: (String) -> Unit,
     private val onFavoriteClick: (ShopInfo) -> Unit,
+    private val onImageClick: (ShopInfo) -> Unit,
     private val onRatingChanged: (ShopInfo, Float) -> Unit = { _, _ -> }
 ) : RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
 
@@ -88,14 +90,36 @@ class ShopListAdapter(
                     onEditClick(shop)
                 }
                 
+                imageButton.setOnClickListener {
+                    onImageClick(shop)
+                }
+                
                 deleteButton.setOnClickListener {
                     onDeleteClick(shop)
                 }
-                  // Set up phone number text to be clickable for calling
+                
+                // Set up phone number text to be clickable for calling
                 shopPhoneText.setOnClickListener {
                     if (shop.phone.isNotEmpty()) {
                         onCallClick(shop.phone)
                     }
+                }
+                  // Load shop image if available
+                if (shop.imageUri.isNotEmpty()) {
+                    try {
+                        // Use extension function to load image with rounded corners
+                        val uri = android.net.Uri.parse(shop.imageUri)
+                        com.example.myapplication.util.loadImageWithRoundedCorners(
+                            shopImageView,
+                            uri,
+                            shopImageView.context.resources.getDimensionPixelSize(R.dimen.shop_image_corner_radius)
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        shopImageView.setImageResource(R.drawable.ic_image_placeholder)
+                    }
+                } else {
+                    shopImageView.setImageResource(R.drawable.ic_image_placeholder)
                 }
                 
                 // Visual indication of selection

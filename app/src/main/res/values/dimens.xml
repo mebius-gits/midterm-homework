@@ -11,7 +11,9 @@
     <dimen name="title_text_size">22sp</dimen>
     <dimen name="subtitle_text_size">18sp</dimen>
     <dimen name="button_text_size">16sp</dimen>
-    <dimen name="list_item_title_size">16sp</dimen>
-    <dimen name="list_item_subtitle_size">14sp</dimen>
+    <dimen name="list_item_title_size">16sp</dimen>    <dimen name="list_item_subtitle_size">14sp</dimen>
     <dimen name="price_text_size">15sp</dimen>
+    
+    <!-- Image styling -->
+    <dimen name="shop_image_corner_radius">16dp</dimen>
 </resources>

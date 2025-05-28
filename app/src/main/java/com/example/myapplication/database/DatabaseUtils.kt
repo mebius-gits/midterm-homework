@@ -55,9 +55,48 @@ object DatabaseUtils {
             return true
         } catch (e: Exception) {
             Log.e(TAG, "Error in transaction: ${e.message}", e)
-            return false
-        } finally {
+            return false        } finally {
             isTransactionInProgress.set(false)
+        }
+    }
+    
+    /**
+     * Reset the database by recreating it
+     * This function will delete all data in the database
+     * Use with caution!
+     * 
+     * @param context The application context
+     * @return True if the database was reset successfully, false otherwise
+     */
+    suspend fun resetDatabase(context: android.content.Context): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                // First, try to delete the database file
+                val databaseFile = context.getDatabasePath("app_database")
+                val deleted = if (databaseFile.exists()) {
+                    context.deleteDatabase("app_database")
+                } else {
+                    true
+                }
+                
+                if (deleted) {
+                    Log.i(TAG, "Database successfully reset")
+                    
+                    // Re-initialize the database
+                    val db = AppDatabase.getDatabase(context)
+                    
+                    // Reinitialize with default data if needed
+                    DatabaseInitializer.initializeDatabase(context)
+                    
+                    true
+                } else {
+                    Log.e(TAG, "Failed to reset database")
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error resetting database: ${e.message}", e)
+                false
+            }
         }
     }
 }

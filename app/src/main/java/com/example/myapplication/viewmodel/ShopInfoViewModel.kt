@@ -60,12 +60,18 @@ class ShopInfoViewModel(application: Application) : AndroidViewModel(application
     ) {
         viewModelScope.launch {
             try {
+                // Get the current shop to preserve the imageUri and other fields
+                val currentShop = shopInfoList.value.find { it.id == shopId }
+                
                 val updatedInfo = ShopInfo(
                     id = shopId,
                     name = name,
                     phone = phone,
                     address = address,
-                    businessHours = businessHours
+                    businessHours = businessHours,
+                    isFavorite = currentShop?.isFavorite ?: false,
+                    rating = currentShop?.rating ?: 0f,
+                    imageUri = currentShop?.imageUri ?: ""
                 )
                 repository.updateShopInfo(updatedInfo)
             } catch (e: Exception) {
@@ -88,7 +94,10 @@ class ShopInfoViewModel(application: Application) : AndroidViewModel(application
                 name = name,
                 phone = phone,
                 address = address,
-                businessHours = businessHours
+                businessHours = businessHours,
+                isFavorite = false,
+                rating = 0f,
+                imageUri = ""  // Default empty image URI
             )
             repository.addShop(newShop)
             repository.setCurrentShop(newShopId)
@@ -159,6 +168,26 @@ class ShopInfoViewModel(application: Application) : AndroidViewModel(application
                 android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+    // Update shop image
+    fun updateShopImage(shopId: Int, imageUri: String) {
+        viewModelScope.launch {
+            try {
+                repository.updateShopImage(shopId, imageUri)
+                
+                // Show toast with the result
+                val context = getApplication<android.app.Application>().applicationContext
+                val message = "店家圖片已更新"
+                android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                
+                // Show error message
+                val context = getApplication<android.app.Application>().applicationContext
+                val message = "更新店家圖片失敗: ${e.message}"
+                android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
             }
         }
     }

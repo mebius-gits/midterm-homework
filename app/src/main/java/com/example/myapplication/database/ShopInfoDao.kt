@@ -72,5 +72,9 @@ interface ShopInfoDao {
      * Update the rating for a shop
      */
     @Query("UPDATE shop_info SET rating = :rating WHERE id = :shopId")
-    suspend fun updateShopRating(shopId: Int, rating: Float)
+    suspend fun updateShopRating(shopId: Int, rating: Float)    /**
+     * Update image URI for a shop
+     */
+    @Query("UPDATE shop_info SET image_uri = :imageUri WHERE id = :shopId")
+    suspend fun updateShopImage(shopId: Int, imageUri: String)
 }

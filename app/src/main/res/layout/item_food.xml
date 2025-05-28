@@ -20,24 +20,24 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
-
-        <androidx.cardview.widget.CardView
+        android:padding="12dp">        <androidx.cardview.widget.CardView
             android:id="@+id/imageContainer"
             android:layout_width="95dp"
             android:layout_height="95dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
+            android:clipChildren="true"
             app:contentPadding="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
+            app:layout_constraintTop_toTopOf="parent"><ImageView
                 android:id="@+id/foodImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="Food image"
                 android:scaleType="centerCrop"
+                android:background="@drawable/rounded_image_corners"
+                android:clipToOutline="true"
+                android:outlineProvider="background"
                 tools:src="@android:drawable/ic_menu_gallery" />
         </androidx.cardview.widget.CardView>
 
