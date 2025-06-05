@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,8 +13,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.adapter.CartItemAdapter
 import com.example.myapplication.databinding.FragmentCartBinding
+import com.example.myapplication.util.SnackbarUtils
 import com.example.myapplication.viewmodel.CartViewModel
 import com.example.myapplication.viewmodel.CartViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class CartFragment : Fragment() {    private var _binding: FragmentCartBinding? = null
@@ -57,16 +58,13 @@ class CartFragment : Fragment() {    private var _binding: FragmentCartBinding? 
             setHasFixedSize(true)
         }
     }
-    
-    private fun setupListeners() {
+      private fun setupListeners() {
         binding.checkoutButton.setOnClickListener {
-            if (viewModel.isCartEmpty()) {
-                Toast.makeText(requireContext(), "購物車是空的", Toast.LENGTH_SHORT).show()
+            if (viewModel.isCartEmpty()) {                SnackbarUtils.showWarning(binding.root, "🛒 購物車空空如也，快去挑選喜歡的商品吧！", requireContext())
                 return@setOnClickListener
             }
             
-            // In a real app, this would navigate to a checkout screen
-            Toast.makeText(requireContext(), "結帳成功！", Toast.LENGTH_SHORT).show()
+            // In a real app, this would navigate to a checkout screen            SnackbarUtils.showSuccess(binding.root, "🎉 結帳成功！感謝您的購買", requireContext())
             viewModel.clearCart()
         }
     }

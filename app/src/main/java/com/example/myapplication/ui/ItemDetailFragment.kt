@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -18,8 +17,10 @@ import com.example.myapplication.databinding.FragmentItemDetailBinding
 import com.example.myapplication.model.CartItem
 import com.example.myapplication.model.FoodItem
 import com.example.myapplication.repository.FoodRepository
+import com.example.myapplication.util.SnackbarUtils
 import com.example.myapplication.viewmodel.MenuViewModel
 import com.example.myapplication.viewmodel.MenuViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
@@ -77,10 +78,9 @@ class ItemDetailFragment : Fragment() {    private var _binding: FragmentItemDet
         binding.decreaseButton.setOnClickListener {
             viewModel.updateQuantity(-1)
         }
-        
-        binding.addToCartButton.setOnClickListener {
+          binding.addToCartButton.setOnClickListener {
             viewModel.addToCart()
-            Toast.makeText(requireContext(), "已加入購物車", Toast.LENGTH_SHORT).show()
+            SnackbarUtils.showSuccess(binding.root, "🛒 商品已成功加入購物車", requireContext())
             findNavController().navigateUp()
         }
     }

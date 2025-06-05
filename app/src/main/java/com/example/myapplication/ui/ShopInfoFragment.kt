@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,8 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.adapter.ShopListAdapter
 import com.example.myapplication.databinding.FragmentShopInfoBinding
 import com.example.myapplication.model.ShopInfo
+import com.example.myapplication.util.SnackbarUtils
 import com.example.myapplication.viewmodel.ShopInfoViewModel
 import com.example.myapplication.viewmodel.ShopInfoViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -101,15 +102,13 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
-    
-    private fun makePhoneCall(phoneNumber: String) {
+      private fun makePhoneCall(phoneNumber: String) {
         val cleanPhoneNumber = phoneNumber.replace("[^0-9+]".toRegex(), "")
         if (cleanPhoneNumber.isNotEmpty()) {
             val dialIntent = Intent(Intent.ACTION_DIAL)
             dialIntent.data = Uri.parse("tel:$cleanPhoneNumber")
             startActivity(dialIntent)
-        } else {
-            Toast.makeText(context, "無效的電話號碼", Toast.LENGTH_SHORT).show()
+        } else {            SnackbarUtils.showError(binding.root, "📞 電話號碼格式不正確", requireContext())
         }
     }
       private fun setupListeners() {
@@ -123,8 +122,7 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
             viewModel.debugShowAllShops(requireContext())
             true
         }
-    }
-      private fun observeViewModel() {
+    }    private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -139,10 +137,26 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
                         android.util.Log.d("ShopInfoFragment", "Current shop ID changed to: $shopId")
                     }
                 }
+                  // Observe UI events
+                launch {
+                    viewModel.uiEvent.collect { event ->
+                        when (event) {
+                            is com.example.myapplication.util.UIEvent.ShowSnackbar -> {
+                                showSnackbar(event.message, event.isError)
+                            }
+                            is com.example.myapplication.util.UIEvent.ShowToast -> {
+                                android.widget.Toast.makeText(
+                                    requireContext(),
+                                    event.message,
+                                    if (event.isError) android.widget.Toast.LENGTH_LONG else android.widget.Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                }
             }
         }
-    }
-      private fun updateShopList(shops: List<ShopInfo>) {
+    }    private fun updateShopList(shops: List<ShopInfo>) {
         // First check for obvious issues
         if (shops.size > 0) {
             android.util.Log.d("ShopInfoFragment", "First shop: ${shops[0].name}, ID: ${shops[0].id}")
@@ -155,14 +169,32 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
         // Show empty message if there are no shops
         binding.emptyListMessage.isVisible = shops.isEmpty()
     }
+      /**
+     * Shows a Snackbar with appropriate styling using SnackbarUtils
+     * @param message The message to display
+     * @param isError Whether this is an error message (affects styling)
+     */
+    private fun showSnackbar(message: String, isError: Boolean = false) {
+        SnackbarUtils.createStyledSnackbar(
+            binding.root, 
+            message, 
+            isError, 
+            requireContext()
+        ).show()
+    }
     
     private fun showAddShopDialog() {
         val dialog = ShopInfoEditDialog(viewModel, isNewShop = true)
         dialog.show(parentFragmentManager, "AddShopDialog")
     }    private fun showEditDialog(shop: ShopInfo) {
-        // Show a loading toast
-        val loadingToast = Toast.makeText(context, "準備編輯: ${shop.name}", Toast.LENGTH_SHORT)
-        loadingToast.show()
+        // Show a loading snackbar
+        val loadingSnackbar = SnackbarUtils.createStyledSnackbar(
+            binding.root, 
+            "⚙️ 準備編輯: ${shop.name}", 
+            false, 
+            requireContext()
+        )
+        loadingSnackbar.show()
         
         // Log for debugging
         android.util.Log.d("ShopInfoFragment", "Preparing to edit shop: ${shop.name}, ID: ${shop.id}")
@@ -172,7 +204,7 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
         
         // Use a small delay to ensure the data is set before opening the dialog
         view?.postDelayed({
-            loadingToast.cancel()
+            loadingSnackbar.dismiss()
             
             // Verify that the shop was set correctly before opening the dialog
             viewLifecycleOwner.lifecycleScope.launch {
@@ -183,31 +215,21 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
                     if (currentShopId == shop.id) {
                         val dialog = ShopInfoEditDialog(viewModel, isNewShop = false)
                         dialog.show(parentFragmentManager, "EditShopDialog")
-                    } else {
-                        Toast.makeText(context, "無法編輯，商家 ID 不符", Toast.LENGTH_SHORT).show()
+                    } else {                        SnackbarUtils.showError(binding.root, "⚠️ 無法編輯，資料同步錯誤", requireContext())
                     }
                 } catch (e: Exception) {
                     android.util.Log.e("ShopInfoFragment", "Error before opening dialog", e)
-                    Toast.makeText(context, "開啟編輯對話框時發生錯誤", Toast.LENGTH_SHORT).show()
+                    SnackbarUtils.showError(binding.root, "❌ 開啟編輯功能時發生錯誤", requireContext())
                 }
-            }
-        }, 500) // Increased delay to ensure data is ready
-    }    private fun confirmDeleteShop(shop: ShopInfo) {
+            }        }, 500) // Increased delay to ensure data is ready
+    }
+      private fun confirmDeleteShop(shop: ShopInfo) {
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle("確認刪除")
             .setMessage("確定要刪除「${shop.name}」嗎？此操作無法恢復。")
             .setPositiveButton("刪除") { _, _ ->
-                // Show a loading indicator
-                val loadingToast = Toast.makeText(context, "刪除中...", Toast.LENGTH_SHORT)
-                loadingToast.show()
-                
                 viewModel.deleteShop(shop.id)
-                
-                loadingToast.cancel()
-                Toast.makeText(context, "商家「${shop.name}」已刪除", Toast.LENGTH_SHORT).show()
-                
-                // Refresh the shop list by triggering a reobservation
-                observeViewModel()
+                // Snackbar now handled by ViewModel through UIEvent
             }
             .setNegativeButton("取消", null)
             .create()
@@ -301,10 +323,8 @@ class ShopInfoFragment : Fragment() {    private var _binding: FragmentShopInfoB
             IMAGE_PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                     // Permission granted, launch image picker
-                    launchImagePicker()
-                } else {
-                    // Permission denied
-                    Toast.makeText(context, "需要權限才能選擇圖片", Toast.LENGTH_SHORT).show()
+                    launchImagePicker()                } else {
+                    // Permission denied                    SnackbarUtils.showError(binding.root, "🔐 需要儲存權限才能選擇圖片", requireContext())
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)

@@ -11,11 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.R
 import com.example.myapplication.databinding.DialogEditShopInfoBinding
+import com.example.myapplication.util.SnackbarUtils
 import com.example.myapplication.viewmodel.ShopInfoViewModel
 import com.vicmikhailau.maskededittext.MaskedEditText
 import kotlinx.coroutines.Job
@@ -37,7 +37,20 @@ class ShopInfoEditDialog(
     private var _binding: DialogEditShopInfoBinding? = null
     private val binding get() = _binding!!
     private var timer: Timer? = null
-    private var shopInfoJob: Job? = null
+    private var shopInfoJob: Job? = null    /**
+     * Helper method to show Snackbar in dialog context using SnackbarUtils
+     */
+    private fun showSnackbar(message: String, isError: Boolean = false) {
+        val rootView = dialog?.window?.decorView ?: binding.root
+        SnackbarUtils.createStyledSnackbar(
+            rootView, 
+            message, 
+            isError, 
+            requireContext(),
+            if (isError) com.google.android.material.snackbar.Snackbar.LENGTH_LONG 
+            else com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
+        ).show()
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -155,15 +168,15 @@ class ShopInfoEditDialog(
                     if (isAdded) {
                         android.util.Log.e("ShopInfoEditDialog", "Error collecting shop info", e)
                         if (e !is kotlinx.coroutines.CancellationException) {
-                            Toast.makeText(context, "讀取商家資料錯誤", Toast.LENGTH_SHORT).show()
+                            showSnackbar("⚠️ 讀取商家資料時發生錯誤", true)
                             dismiss()
                         }
                     }
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
-          binding.apply {
-
+        
+        binding.apply {
             cancelButton.setOnClickListener {
                 dismiss()
             }
@@ -266,62 +279,45 @@ class ShopInfoEditDialog(
             binding.businessHoursLayout.error = context?.getString(R.string.validation_business_hours)
             hasError = true
         }
-        
-        if (hasError) {
-            Toast.makeText(context, context?.getString(R.string.validation_required_fields), Toast.LENGTH_SHORT).show()
+          if (hasError) {
+            showSnackbar("📝 請檢查並完整填寫所有必要欄位", true)
             return
         }
-        
-        // Add or update shop info
+          // Add or update shop info
         if (isNewShop) {
             // Show loading state
             binding.submitButton.isEnabled = false
             binding.submitButton.text = "處理中..."
-              try {                viewModel.addNewShop(
-                    name = name,
-                    phone = phone,
-                    address = address,
-                    businessHours = businessHours
-                )
-                
-                // Add a delay to ensure the add completes before showing message
-                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                    Toast.makeText(context, "商家「$name」已新增", Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }, 300)
-            } catch (e: Exception) {
-                Log.e("ShopInfoEditDialog", "Error adding shop", e)
-                Toast.makeText(context, "新增商家時出錯，請再試一次", Toast.LENGTH_SHORT).show()
-                
-                // Re-enable the submit button
-                binding.submitButton.isEnabled = true
-                binding.submitButton.text = "儲存"
-            }
+              
+            viewModel.addNewShop(
+                name = name,
+                phone = phone,
+                address = address,
+                businessHours = businessHours
+            )
+            
+            // Snackbar notification is handled by ViewModel through UIEvent
+            // Add a delay to ensure the add completes before dismissing dialog
+            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                dismiss()
+            }, 300)
         } else {
             // Show loading state
             binding.submitButton.isEnabled = false
             binding.submitButton.text = "處理中..."
             
-            try {                viewModel.updateShopInfo(
-                    name = name,
-                    phone = phone,
-                    address = address,
-                    businessHours = businessHours
-                )
-                
-                // Add a delay to ensure the update completes before showing message
-                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                    Toast.makeText(context, "「$name」資訊已更新", Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }, 300)
-            } catch (e: Exception) {
-                Log.e("ShopInfoEditDialog", "Error updating shop", e)
-                Toast.makeText(context, "更新商家資訊時出錯，請再試一次", Toast.LENGTH_SHORT).show()
-                
-                // Re-enable the submit button
-                binding.submitButton.isEnabled = true
-                binding.submitButton.text = "儲存"
-            }
+            viewModel.updateShopInfo(
+                name = name,
+                phone = phone,
+                address = address,
+                businessHours = businessHours
+            )
+            
+            // Snackbar notification is handled by ViewModel through UIEvent
+            // Add a delay to ensure the update completes before dismissing dialog
+            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                dismiss()
+            }, 300)
         }
     }
 
